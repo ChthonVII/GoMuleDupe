@@ -67,8 +67,10 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
     private JEditorPane iItemText;
 
     private JButton iPickup;
+    private JButton iPickupDupe;
     private JButton iDropOne;
     private JButton iDropAll;
+    private JButton iDropDupe;
 
     // item types
     private JCheckBox iTypeUnique;
@@ -291,7 +293,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
 
                 public void mouseClicked(MouseEvent arg0) {
                     if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 2) {
-                        pickupSelected();
+                        pickupSelected(false);
                     }
                 }
 
@@ -354,16 +356,22 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
 
             if (isStash()) {
                 iPickup.setEnabled(true);
+                iPickupDupe.setEnabled(true);
                 iDropOne.setEnabled(true);
                 iDropAll.setEnabled(true);
+                iDropDupe.setEnabled(true);
                 iDropOne.setVisible(true);
                 iDropAll.setVisible(true);
+                iDropDupe.setVisible(true);
             } else {
                 iPickup.setEnabled(true);
+                iPickupDupe.setEnabled(true);
                 iDropOne.setEnabled(false);
                 iDropAll.setEnabled(false);
+                iDropDupe.setEnabled(false);
                 iDropOne.setVisible(false);
                 iDropAll.setVisible(false);
+                iDropDupe.setVisible(false);
             }
             iTable.setModel(iItemModel);
         } catch (Exception pEx) {
@@ -388,8 +396,10 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
 
         iStash = null;
         iPickup.setEnabled(false);
+        iPickupDupe.setEnabled(false);
         iDropOne.setEnabled(false);
         iDropAll.setEnabled(false);
+        iDropDupe.setEnabled(false);
         itemListChanged();
     }
 
@@ -411,10 +421,18 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         iDeleteDups.setEnabled(D2FileManager.getInstance().getProject().getAllowDelete());
         iPickup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
-                pickupSelected();
+                pickupSelected(false);
             }
         });
         lButtonPanel.addToPanel(iPickup, 0, 0, 1, RandallPanel.HORIZONTAL);
+        
+        iPickupDupe = new JButton("Pickup Dupe");
+        iPickupDupe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent pEvent) {
+                pickupSelected(true);
+            }
+        });
+        lButtonPanel.addToPanel(iPickupDupe, 1, 0, 1, RandallPanel.HORIZONTAL);
 
         iDropOne = new JButton("Drop");
         iDropOne.addActionListener(new ActionListener() {
@@ -424,7 +442,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 selectItem(pItem);
             }
         });
-        lButtonPanel.addToPanel(iDropOne, 1, 0, 1, RandallPanel.HORIZONTAL);
+        lButtonPanel.addToPanel(iDropOne, 2, 0, 1, RandallPanel.HORIZONTAL);
 
         iDropAll = new JButton("Drop All");
         iDropAll.addActionListener(new ActionListener() {
@@ -444,8 +462,22 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 if (lastItemAdded != null) selectItem(lastItemAdded);
             }
         });
-        lButtonPanel.addToPanel(iDropAll, 2, 0, 1, RandallPanel.HORIZONTAL);
+        lButtonPanel.addToPanel(iDropAll, 3, 0, 1, RandallPanel.HORIZONTAL);
 
+        iDropDupe = new JButton("Drop Dupe");
+        iDropDupe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent pEvent) {
+                D2Item pItem = D2ViewClipboard.removeItem();
+                D2Item dupe = pItem;
+                D2ViewClipboard.addItem(dupe); // put it right back
+                // todo: change the fingerprint on the dupe
+                iStash.addItem(pItem);
+                selectItem(pItem);
+            }
+        });
+        lButtonPanel.addToPanel(iDropDupe, 4, 0, 1, RandallPanel.HORIZONTAL);
+        
+        
         iDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
                 Vector lItemList = new Vector();
@@ -473,7 +505,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 }
             }
         });
-        lButtonPanel.addToPanel(iDelete, 3, 0, 1, RandallPanel.HORIZONTAL);
+        lButtonPanel.addToPanel(iDelete, 5, 0, 1, RandallPanel.HORIZONTAL);
 
 
         iDeleteDups.addActionListener(new ActionListener() {
@@ -515,7 +547,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             }
         });
         if (isStash()) {
-            lButtonPanel.addToPanel(iDeleteDups, 4, 0, 1, RandallPanel.HORIZONTAL);
+            lButtonPanel.addToPanel(iDeleteDups, 6, 0, 1, RandallPanel.HORIZONTAL);
         }
         return lButtonPanel;
     }
@@ -525,7 +557,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         if (rowOfInsertedItem >= 0) iTable.changeSelection(rowOfInsertedItem, 0, false, false);
     }
 
-    protected void pickupSelected() {
+    protected void pickupSelected(boolean dupeit) {
         Vector lItemList = new Vector();
 
         int lRows[] = iTable.getSelectedRows();
@@ -537,7 +569,10 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             try {
                 iStash.ignoreItemListEvents();
                 for (int i = 0; i < lItemList.size(); i++) {
-                    iStash.removeItem((D2Item) lItemList.get(i));
+                    if (!dupeit){
+                        iStash.removeItem((D2Item) lItemList.get(i));
+                    }
+                    // todo: change the fingerprint on the dupe(s)
                     D2ViewClipboard.addItem((D2Item) lItemList.get(i));
                 }
             } finally {
