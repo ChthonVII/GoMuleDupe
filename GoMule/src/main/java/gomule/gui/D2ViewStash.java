@@ -30,6 +30,8 @@ import gomule.util.D2CellValue;
 import randall.util.RandallPanel;
 import randall.util.RandallUtil;
 
+import com.rits.cloning.Cloner;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.JTableHeader;
@@ -71,6 +73,8 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
     private JButton iDropOne;
     private JButton iDropAll;
     private JButton iDropDupe;
+    
+    private static Cloner cloner=new Cloner();
 
     // item types
     private JCheckBox iTypeUnique;
@@ -332,6 +336,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         if (iTable.getRowCount() > 0) {
             iTable.setRowSelectionInterval(0, 0);
         }
+        
+        cloner.setDumpClonedClasses(false);
+        
     }
 
     public static String getStashName(String pFileName) {
@@ -468,9 +475,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         iDropDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
                 D2Item pItem = D2ViewClipboard.removeItem();
-                D2Item dupe = pItem;
-                D2ViewClipboard.addItem(dupe); // put it right back
-                // todo: change the fingerprint on the dupe
+                D2Item original=cloner.deepClone(pItem);
+                D2ViewClipboard.addItem(original); // put it right back
+                boolean trashbool = pItem.randomizeFingerprint();
                 iStash.addItem(pItem);
                 selectItem(pItem);
             }
@@ -569,11 +576,15 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             try {
                 iStash.ignoreItemListEvents();
                 for (int i = 0; i < lItemList.size(); i++) {
-                    if (!dupeit){
-                        iStash.removeItem((D2Item) lItemList.get(i));
+                    if (dupeit){
+                        D2Item dupe = (D2Item)cloner.deepClone((D2Item) lItemList.get(i));
+                        boolean trashbool = dupe.randomizeFingerprint();
+                        D2ViewClipboard.addItem(dupe);
                     }
-                    // todo: change the fingerprint on the dupe(s)
-                    D2ViewClipboard.addItem((D2Item) lItemList.get(i));
+                    else {
+                        iStash.removeItem((D2Item) lItemList.get(i));
+                        D2ViewClipboard.addItem((D2Item) lItemList.get(i));
+                    }
                 }
             } finally {
                 iStash.listenItemListEvents();

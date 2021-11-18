@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Vector;
+import java.util.ArrayList;
 
 // this class is for reading and writing on
 // a bit level. i'd rename it, but then i'd
@@ -196,6 +197,12 @@ public class D2BitReader {
     // of 8 bytes, so really you can pull 1 to 64 bits
     // from an 8 byte block, not 64 bits from anywhere
     // position (in bits) is advanced upon completion
+    // --- THIS APPEARS TO BE CORRECT, BUT ---
+    // I'm replacing it with an implementation similar to the new write() function
+    // for the sake of consistency,
+    // and to remove the alignment restrictions,
+    // and to be really sure there's no undetected bugs lurking here like with write()
+    /*
     public long read(int bits) {
         // number of bytes represented by the position
         int byte_num = position / 8;
@@ -220,13 +227,98 @@ public class D2BitReader {
         // move desired bits to the right side of the long
         fixed_data = fixed_data >>> (64 - bits);
 
+        
+        // test new read method
+        //long oldread = unflip(fixed_data, bits);
+        //long newread = read_new(bits);
+        //if (oldread != newread){
+        //    System.out.println("read disagreement! position: " + position + "; old: " + oldread + " (0x" + Long.toHexString(oldread) + "); new: " + newread + "(0x" + Long.toHexString(newread) + ")");
+        //}
+        
+        
+        
         // advance position by the number of bits read
         position += bits;
 
         // give data as a long
         return unflip(fixed_data, bits);
     }
+    */
 
+    // replace the buggy read() function with one similar to new write()
+    // as an added bonus, the alignment restrictions are gone -- we can always read up to 64 bits regardless of alignment
+    // see comments above write()
+    public long read(int bits) {
+        
+        // get current position in bits and bytes
+        int byte_num = position / 8;
+        int bits_past = position % 8;
+        
+        // how many bytes must we process?
+        int bitspan = bits + bits_past;
+        int bitsremainder = bitspan % 8;
+        int bitsleft = 0;
+        if (bitsremainder != 0){
+            bitsleft = 8 - bitsremainder;
+            bitspan += bitsleft;
+        }
+        int bytespan = bitspan/8;
+        
+        //System.out.println("bytespan: " + bytespan + "; bits_past: " + bits_past + "; bitsleft: " + bitsleft);
+        
+        // read the existing bytes into a fully-little endian (bytewise and bitwise) array
+        ArrayList bagobitsread = new ArrayList();
+        bagobitsread.ensureCapacity(bitspan);
+        for (int i=0; i<bytespan; i++){
+            
+            // if there's data to read, do so
+            if (byte_num + i < filedata.length){
+            
+                // read in byte
+                int byteread = 0xFF & filedata[byte_num + i];
+                //System.out.println("byte #" + i + " raw = 0x" + Integer.toHexString(byteread));
+                
+                // put it in the array
+                for (int j=0; j<8; j++){
+                    boolean thisbit = false;
+                    if (((byteread >>> j) & 0x1) == 1){
+                        thisbit = true;
+                    }
+                    bagobitsread.add(thisbit);
+                }
+            }
+            // if we're past the end of the file, pad with 0s
+            else {
+                boolean falsebit = false;
+                 for (int j=0; j<8; j++){
+                    bagobitsread.add(falsebit);
+                 }
+            }
+        }
+        // array now contains fully little-endian data (both byte order and bit order)
+        
+        // strip leading bits to align it
+        for (int i=0; i<bits_past; i++){
+            bagobitsread.remove(0);
+        }
+        
+        // now convert to a long
+        long output = 0;
+        for (int i=0; i<bits; i++){
+            boolean readbit = (boolean)bagobitsread.get(i);
+            if (readbit){
+                long thisbit = 1;
+                output += (thisbit << i);
+            }
+        }
+        
+        // advance position
+        position += bits; // comment this out if testing inside old read()
+        
+        return output;
+    }
+    
+    
     // flips the last x bits of the long as specified by
     // 'bits'. This changes the number represented by
     // those bits back to the order expected by java
@@ -246,6 +338,8 @@ public class D2BitReader {
     // again, the 64 bits 'in theory' issue applies
     // the same way as it does in read
     // position (in bits) advanced on completion
+    /*
+    --- THIS IS TOTALLY BUGGY ---
     public void write(long data, int bits) {
         // get current position in bits and bytes
         int byte_num = position / 8;
@@ -290,7 +384,110 @@ public class D2BitReader {
         // advance position
         position += bits;
     }
+    */
 
+    // replace the buggy write() function with one that works correctly
+    // as an added bonus, the alignment restrictions are gone -- we can always write up to 64 bits regardless of alignment
+    // Since Java is a distinctly awful language that's especially awful at bit-level manipulations
+    // (which is probably why the original write() function was buggy),
+    // I've decided to adopt Daan Coppens strategy of using an array of bools to bypass all that nonsense.
+    // (see https://daancoppens.wordpress.com/2017/01/26/understanding-the-diablo-2-save-file-format-part-2/)
+    // This probably isn't super efficient (not that anything is ever efficient in Java...),
+    // but it couples the logicial operations to the bitwise operations in a very clear manner that
+    // largely eliminates the possibility of error. 
+    public void write(long data, int bits) {
+                
+        // get current position in bits and bytes
+        int byte_num = position / 8;
+        int bits_past = position % 8;
+        
+        // how many bytes must we process?
+        int bitspan = bits + bits_past;
+        int bitsremainder = bitspan % 8;
+        int bitsleft = 0;
+        if (bitsremainder != 0){
+            bitsleft = 8 - bitsremainder;
+            bitspan += bitsleft;
+        }
+        int bytespan = bitspan/8;
+        
+        //System.out.println("bytespan: " + bytespan + "; bits_past: " + bits_past + "; bitsleft: " + bitsleft);
+        
+        // read the existing bytes into a fully-little endian (bytewise and bitwise) array
+        ArrayList bagobitsread = new ArrayList();
+        bagobitsread.ensureCapacity(bitspan);
+        for (int i=0; i<bytespan; i++){
+            
+            // break if past end of filedata
+            if (byte_num + i >= filedata.length){
+                break;
+            }
+        
+            // read in byte
+            int byteread = 0xFF & filedata[byte_num + i];
+            //System.out.println("byte #" + i + " raw = 0x" + Integer.toHexString(byteread));
+            
+            // put it in the array
+            for (int j=0; j<8; j++){
+                boolean thisbit = false;
+                if (((byteread >>> j) & 0x1) == 1){
+                    thisbit = true;
+                }
+                bagobitsread.add(thisbit);
+            }
+        }
+        // array now contains fully little-endian data (both byte order and bit order)
+        
+        // also convert the data to be written into a fully little-endian (bytewise and bitwise) array
+        ArrayList bagobitswrite = new ArrayList();
+        bagobitswrite.ensureCapacity(bitspan);
+        for (int i =0; i<bits; i++){
+            boolean thisbit = false;
+            if (((data >>> i) & 0x1) == 1){
+                thisbit = true;
+            }
+            bagobitswrite.add(thisbit);
+        }
+        // pad the front of the data array to align it
+        boolean falsebit = false;
+        for (int i=0; i<bits_past; i++){
+            bagobitswrite.add(0, falsebit);
+        }
+        // pad the back to ensure no out-of-bounds read
+        for (int i=0; i<bitsleft; i++){
+            bagobitswrite.add(falsebit);
+        }
+        
+        // now we can write back
+        int bitswritten = 0;
+        for (int i=0; i<bytespan; i++){
+            // break if past end of filedata
+            if (byte_num + i >= filedata.length){
+                break;
+            }
+            int newbyte = 0;
+            for (int j=0; j<8; j++){
+                int newbit = 0;
+                boolean readbit = (boolean)bagobitsread.get(bitswritten);
+                boolean writebit = (boolean)bagobitswrite.get(bitswritten);
+                // use the original bits if we're in the padding; otherwise use the data bits
+                if (writebit || (readbit && ((bitswritten < bits_past) || (bitswritten >= bits + bits_past )))){
+                    newbit = 1;
+                }
+                newbit = newbit << j;
+                newbyte += newbit;
+                bitswritten++;
+            }
+            filedata[byte_num + i] = (byte) newbyte;
+            //System.out.println("byte #" + i + " wrote = 0x" + Integer.toHexString(newbyte));
+        }
+        
+        
+        // advance position
+        position += bits;
+    }
+    
+    
     // reverses the bits in a byte. Necessary
     // for reading properly accross byte marks
     public int flip(byte b) {

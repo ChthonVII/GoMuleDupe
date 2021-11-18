@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Random;
 
 //an item class
 //manages one item
@@ -153,6 +154,11 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     private final HuffmanLookupTable huffmanLookupTable = HuffmanLookupTable.withStandardDictionary();
 
+    private int stream_start_pos;
+    private int stream_fingerprint_pos;
+    private int fingerprint_offset;
+    private static Random randyRainbow = new Random();
+    
     public D2Item(String pFileName, D2BitReader pFile, long pCharLvl)
             throws Exception {
         iFileName = pFileName;
@@ -179,6 +185,9 @@ public class D2Item implements Comparable, D2ItemInterface {
     // common to all items, then split based on
     // whether the item is an ear
     private void read_item(D2BitReader pFile) throws Exception {
+        
+        stream_start_pos = pFile.get_pos();
+        
         flags = (int) pFile.unflip(pFile.read(32), 32); // 4 bytes
 
         iSocketed = check_flag(12);
@@ -453,6 +462,8 @@ public class D2Item implements Comparable, D2ItemInterface {
     private void readExtend1(D2BitReader pFile) throws Exception {
         // extended item
         iSocketNrFilled = (short) pFile.read(3);
+        stream_fingerprint_pos = pFile.get_pos();
+        fingerprint_offset = stream_fingerprint_pos - stream_start_pos;
         fingerprint = pFile.read(32);
         iFP = "0x" + Integer.toHexString((int) fingerprint);
         ilvl = (short) pFile.read(7);
@@ -2524,4 +2535,66 @@ public class D2Item implements Comparable, D2ItemInterface {
     public boolean isQuestItem() {
         return questItem;
     }
+    
+    public boolean randomizeFingerprint(){
+        
+        // ears have no fingerprint
+        if (check_flag(17)){
+            return false;
+        }
+        // simple items have no fingerprint
+        if (check_flag(22)){
+            return false;
+        }
+        
+        // We saved the fingerprint offset during the read process so we don't need to recalculate it here.
+        
+        // If we did want to recalculate it:
+        // read_item() reads 53 bits, then drops into readExtend() (comment saying 9.5 bytes is wrong -- leftover from original D2?)
+        // readExtend() has a huffmanLookupTable.readHuffmanEncodedString()... yuck
+        // The lazy way around that is to just replay the read operation to advance the read position
+        // Then we're dumped into readExtend1() which reads 3 bits for iSocketNrFilled, and then 32 bits for fingerprint
+
+        // (Aside: It would be a good idea to save offsets for *every* data field. That would make things much easier when we decide we want to change one.)
+
+        /*
+        // Test read of the existing fingerprint
+        System.out.println("offset is: " + fingerprint_offset);
+        iItem.set_byte_pos(0);
+        iItem.skipBits(fingerprint_offset);
+        long testread = iItem.read(32);
+        System.out.println("testread: " + testread);
+        */
+        
+        //fingerprint = 0xDEADBEEF;
+        fingerprint = (long)randyRainbow.nextInt();
+        iFP = "0x" + Integer.toHexString((int) fingerprint);
+        iItem.set_byte_pos(0);
+        iItem.skipBits(fingerprint_offset);
+        iItem.write(fingerprint, 32);
+        //System.out.println("offset is: " + fingerprint_offset);
+        //System.out.println("wrote: " + fingerprint);
+        
+        /*
+        // test -- read back from what we just wrote
+        iItem.set_byte_pos(0);
+        iItem.skipBits(fingerprint_offset);
+        long reread = iItem.read(32);
+        System.out.println("reread: " + reread);
+        
+        // test -- entirely reparse the item from the bitstream in iItem
+        try{
+            iItem.set_byte_pos(0);
+            read_item(iItem);
+        } catch (Exception fuckyoujava) {
+            // whatever
+        }
+        */
+        
+        // TODO: (1) change fingerprint on socketed jewels; (2) change GUID on items that have one
+        
+        return true;
+    }
+
+    
 }
