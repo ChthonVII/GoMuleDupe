@@ -52,6 +52,14 @@ public class D2BitReader {
         filedata = b;
         position = 0;
     }
+    
+    // COPY CONSTRUCTOR
+    // create new bitreader from existing bitreader
+    public D2BitReader(D2BitReader original){
+        filename = original.filename;
+        position = original.position;
+        filedata = original.filedata.clone();
+    }
 
     public String getFileName() {
         return filename;

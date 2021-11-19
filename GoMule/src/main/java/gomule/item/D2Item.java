@@ -130,13 +130,13 @@ public class D2Item implements Comparable, D2ItemInterface {
 
     private boolean iBelt = false;
 
-    private D2BitReader iItem;
+    protected D2BitReader iItem;
 
     private String iFileName;
 
-    private boolean iIsChar;
+    protected boolean iIsChar;
 
-    private int iCharLvl;
+    protected int iCharLvl;
 
     private int iReqLvl = -1;
 
@@ -179,6 +179,27 @@ public class D2Item implements Comparable, D2ItemInterface {
             pEx.printStackTrace();
             throw new D2ItemException("Error: " + pEx.getMessage() + getExStr());
         }
+    }
+    
+    // COPY CONSTRUCTOR
+    // create a new D2Item from an existing one
+    public D2Item(D2Item original){
+        iFileName = original.iFileName;
+        iIsChar = original.iIsChar;
+        iCharLvl = original.iCharLvl;
+        iItem = new D2BitReader(original.iItem);
+        int oldpos = iItem.get_pos();
+        // sneaky trick -- rather than trying to deep copy all those members, we'll just deep copy the bitreader, then run read_item on it :)
+        try{
+            iItem.set_byte_pos(0);
+            read_item(iItem);
+        } catch (Exception pEx) {
+            pEx.printStackTrace();
+        }
+        finally {
+            iItem.set_pos(oldpos);
+        }
+        return;
     }
 
     // read basic information from the bytes

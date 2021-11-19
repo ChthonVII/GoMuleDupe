@@ -15,7 +15,6 @@ repositories {
 dependencies {
     implementation 'com.google.guava:guava:31.0-jre'
     implementation 'com.formdev:flatlaf:1.6'
-    implementation 'org.objenesis:objenesis:3.2'
     testImplementation "org.mockito:mockito-core:3.+"
     testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
 }

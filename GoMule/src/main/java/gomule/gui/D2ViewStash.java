@@ -30,8 +30,6 @@ import gomule.util.D2CellValue;
 import randall.util.RandallPanel;
 import randall.util.RandallUtil;
 
-import com.rits.cloning.Cloner;
-
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.JTableHeader;
@@ -74,8 +72,6 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
     private JButton iDropAll;
     private JButton iDropDupe;
     
-    private static Cloner cloner=new Cloner();
-
     // item types
     private JCheckBox iTypeUnique;
     private JCheckBox iTypeSet;
@@ -337,8 +333,6 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             iTable.setRowSelectionInterval(0, 0);
         }
         
-        cloner.setDumpClonedClasses(false);
-        
     }
 
     public static String getStashName(String pFileName) {
@@ -475,7 +469,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         iDropDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
                 D2Item pItem = D2ViewClipboard.removeItem();
-                D2Item original=cloner.deepClone(pItem);
+                D2Item original = new D2Item(pItem);
                 D2ViewClipboard.addItem(original); // put it right back
                 boolean trashbool = pItem.randomizeFingerprint();
                 iStash.addItem(pItem);
@@ -577,7 +571,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 iStash.ignoreItemListEvents();
                 for (int i = 0; i < lItemList.size(); i++) {
                     if (dupeit){
-                        D2Item dupe = (D2Item)cloner.deepClone((D2Item) lItemList.get(i));
+                        D2Item dupe = new D2Item((D2Item) lItemList.get(i));
                         boolean trashbool = dupe.randomizeFingerprint();
                         D2ViewClipboard.addItem(dupe);
                     }
