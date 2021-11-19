@@ -369,6 +369,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                         + " 0x" + Integer.toHexString((int) pFile.read(32))
                         + " 0x" + Integer.toHexString((int) pFile.read(32))
                         + " 0x" + Integer.toHexString((int) pFile.read(32));
+                //System.out.println(iGUID);
             } else {
                 pFile.read(3);
             }
@@ -2602,7 +2603,19 @@ public class D2Item implements Comparable, D2ItemInterface {
         iItem.skipBits(fingerprint_offset);
         long reread = iItem.read(32);
         System.out.println("reread: " + reread);
+        */
         
+        
+        // Would also randomize the GUID here, except that it seems GUID has been retired in D2R.
+        // At least none of the items in my stashes have GUIDs.
+        // So I have no samples from which to determine what type of GUID should be used
+        
+        // also randomize fingerprint for items socketed within this item
+        for (int i=0; i<iSocketNrFilled; i++){
+            ((D2Item)iSocketedItems.get(i)).randomizeFingerprint();
+        }
+        
+        /*
         // test -- entirely reparse the item from the bitstream in iItem
         try{
             iItem.set_byte_pos(0);
@@ -2611,8 +2624,6 @@ public class D2Item implements Comparable, D2ItemInterface {
             // whatever
         }
         */
-        
-        // TODO: (1) change fingerprint on socketed jewels; (2) change GUID on items that have one
         
         return true;
     }
