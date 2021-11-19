@@ -253,7 +253,7 @@ public class D2BitReader {
     }
     */
 
-    // replace the buggy read() function with one similar to new write()
+    // replace the read() function with one similar to new write()
     // as an added bonus, the alignment restrictions are gone -- we can always read up to 64 bits regardless of alignment
     // see comments above write()
     public long read(int bits) {
