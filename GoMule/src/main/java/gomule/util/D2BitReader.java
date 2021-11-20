@@ -475,15 +475,13 @@ public class D2BitReader {
             }
             int newbyte = 0;
             for (int j=0; j<8; j++){
-                int newbit = 0;
                 boolean readbit = (boolean)bagobitsread.get(bitswritten);
                 boolean writebit = (boolean)bagobitswrite.get(bitswritten);
                 // use the original bits if we're in the padding; otherwise use the data bits
                 if (writebit || (readbit && ((bitswritten < bits_past) || (bitswritten >= bits + bits_past )))){
-                    newbit = 1;
+                    int newbit = 1;
+                    newbyte += (newbit << j);
                 }
-                newbit = newbit << j;
-                newbyte += newbit;
                 bitswritten++;
             }
             filedata[byte_num + i] = (byte) newbyte;
