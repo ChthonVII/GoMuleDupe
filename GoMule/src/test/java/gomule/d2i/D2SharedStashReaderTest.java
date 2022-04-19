@@ -1,9 +1,9 @@
 package gomule.d2i;
 
 import com.google.common.io.BaseEncoding;
+import gomule.item.D2ItemRenderer;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.Test;
-import randall.d2files.D2TblFile;
 import randall.d2files.D2TxtFile;
 
 import java.io.PrintWriter;
@@ -20,8 +20,7 @@ public class D2SharedStashReaderTest {
     @Test
     public void simpleStash() throws Exception {
         D2TxtFile.constructTxtFiles("./d2111");
-        D2TblFile.readAllFiles("./d2111");
-        byte[] simpleStash = BaseEncoding.base16().decode("55AA55AA0000000061000000F2A416004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564D6900855AA55AA0000000061000000000000004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564F6472255AA55AA0000000061000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000");
+        byte[] simpleStash = BaseEncoding.base16().decode("55AA55AA0000000062000000F2A416004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564D6900855AA55AA0000000062000000000000004D00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D01001000A2000564F6472255AA55AA0000000062000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004A4D0000");
         D2SharedStash stash = new D2SharedStashReader().readStash("somethingSoftCore.d2i", new D2BitReader(simpleStash));
         assertEquals(1484018, stash.getPane(0).getGold());
         assertEquals(0, stash.getPane(1).getGold());
@@ -47,6 +46,6 @@ public class D2SharedStashReaderTest {
     }
 
     private List<String> getItemDumps(D2SharedStash.D2SharedStashPane pane) {
-        return pane.getItems().stream().map(it -> it.itemDump(true).replace("\r", "")).collect(Collectors.toList());
+        return pane.getItems().stream().map(it -> D2ItemRenderer.itemDump(it, true).replace("\r", "")).collect(Collectors.toList());
     }
 }

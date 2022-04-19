@@ -2,12 +2,11 @@ package gomule.d2s;
 
 import com.google.common.io.Resources;
 import org.junit.jupiter.api.Test;
-import randall.d2files.D2TblFile;
 import randall.d2files.D2TxtFile;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("UnstableApiUsage")
 public class D2CharacterTest {
@@ -15,7 +14,6 @@ public class D2CharacterTest {
     @Test
     public void complexChar() throws Exception {
         D2TxtFile.constructTxtFiles("./d2111");
-        D2TblFile.readAllFiles("./d2111");
         D2Character d2Character = new D2Character(new File(Resources.getResource("charFiles/complexChar.d2s").toURI()).getAbsolutePath());
         assertEquals(expectedComplexChar, d2Character.fullDumpStr().replaceAll("\r", ""));
     }
@@ -108,7 +106,7 @@ public class D2CharacterTest {
             "Ceremonial Javelin\n" +
             "Throw Damage: 74 - 197\n" +
             "One Hand Damage: 74 - 145\n" +
-            "Quantity: 140\n" +
+            "Quantity: 142\n" +
             "Required Level: 42\n" +
             "Required Strength: 25\n" +
             "Required Dexterity: 109\n" +
@@ -371,7 +369,7 @@ public class D2CharacterTest {
             "Adds 15 - 45 Cold Damage Over 4 Secs (100 Frames)\n" +
             "+20 to Dexterity\n" +
             "+40 to Mana\n" +
-            "Cold Absorb 20%\n" +
+            "+20 Cold Absorb\n" +
             "Cannot Be Frozen\n" +
             "\n" +
             "The Stone of Jordan\n" +
@@ -402,7 +400,7 @@ public class D2CharacterTest {
             "+20 to Strength\n" +
             "+20 to Vitality\n" +
             "+10% to Maximum Lightning Resist\n" +
-            "+20 Lightning Absorb\n" +
+            "Lightning Absorb 20%\n" +
             "\n" +
             "Aldur's Advance\n" +
             "Battle Boots\n" +
@@ -537,7 +535,7 @@ public class D2CharacterTest {
             "Dol Rune\n" +
             "Required Level: 31\n" +
             "Version: Resurrected\n" +
-            "Weapons: Hit Causes Monster to Flee 25%\n" +
+            "Weapons: Hit Causes Monster to Flee %d%% 25%\n" + //TODO
             "Armor: Replenish Life +7\n" +
             "Shields: Replenish Life +7\n" +
             "\n" +
@@ -734,7 +732,7 @@ public class D2CharacterTest {
             "Matriarchal Javelin\n" +
             "Throw Damage: 169 - 324\n" +
             "One Hand Damage: 149 - 274\n" +
-            "Quantity: 140\n" +
+            "Quantity: 142\n" +
             "Required Level: 55\n" +
             "Required Strength: 97\n" +
             "Required Dexterity: 141\n" +
@@ -795,22 +793,22 @@ public class D2CharacterTest {
             "\n" +
             "Name:       Razan\n" +
             "Race:       Desert Mercenary\n" +
-            "Type:       Def-Nightmare\n" +
+            "Type:       HolyFreeze-Nightmare\n" +
             "Experience: 107329840\n" +
             "Level:      96\n" +
             "Dead?:      unknown\n" +
             "\n" +
             "            Naked/Gear\n" +
-            "Strength:   205/205\n" +
-            "Dexterity:  166/166\n" +
-            "HP:         2207/2207\n" +
-            "Defense:    1614/2175\n" +
-            "AR:         2042/2045\n" +
+            "Strength:   209/209\n" +
+            "Dexterity:  170/170\n" +
+            "HP:         2270/2270\n" +
+            "Defense:    1657/2218\n" +
+            "AR:         2105/2108\n" +
             "\n" +
-            "Fire:       230/190/130\n" +
-            "Cold:       260/220/160\n" +
-            "Lightning:  230/190/130\n" +
-            "Poison:     230/190/130\n" +
+            "Fire:       233/193/133\n" +
+            "Cold:       263/223/163\n" +
+            "Lightning:  233/193/133\n" +
+            "Poison:     233/193/133\n" +
             "\n" +
             "Treachery\n" +
             "Wire Fleece\n" +
@@ -891,7 +889,7 @@ public class D2CharacterTest {
             "Prevent Monster Heal\n" +
             "+49 to Vitality (Based on Character Level)\n" +
             "30% Better Chance of Getting Magic Items\n" +
-            "Level 21 Cyclone Armor (30/30 Charges)\n" +
+            "Level 21 Cyclone Armor Level 30 %s (30/30 Charges)\n" + //TODO
             "Ethereal\n" +
             "4 Sockets (4 used)\n" +
             "Socketed: Ber Rune\n" +

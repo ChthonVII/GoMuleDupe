@@ -21,14 +21,20 @@
 
 package gomule.d2s;
 
+import com.google.common.collect.Iterables;
+import gomule.D2Files;
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
+import gomule.item.D2ItemRenderer;
 import gomule.item.D2Prop;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
-import randall.d2files.*;
+import randall.d2files.D2FileReader;
+import randall.d2files.D2FileWriter;
+import randall.d2files.D2TxtFile;
+import randall.d2files.D2TxtFileItemProperties;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -137,7 +143,7 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != 97) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != 98) throw new Exception("Incorrect Character version: " + lVersion);
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);
@@ -147,7 +153,7 @@ public class D2Character extends D2ItemListAdapter {
         if (!Arrays.equals(calculatedChecksum, checksumFromFile)) throw new Exception("Incorrect Checksum");
         iReader.set_byte_pos(16);
 //		long lWeaponSet = iReader.read(32);
-        iReader.read(32);
+        iReader.set_byte_pos(267);
         StringBuffer lCharName = new StringBuffer();
         for (int i = 0; i < 16; i++) {
             long lChar = iReader.read(8);
@@ -197,7 +203,7 @@ public class D2Character extends D2ItemListAdapter {
         if (iReader.read(32) != 0) {
             cMercInfo = new HashMap();
             iReader.skipBits(16);
-            D2TxtFileItemProperties hireCol = (D2TxtFile.HIRE.searchColumns("Id", Long.toString(iReader.read(16))));
+            D2TxtFileItemProperties hireCol = (D2TxtFileItemProperties) Iterables.getLast(D2TxtFile.HIRE.searchColumnsMultipleHits("Id", Long.toString(iReader.read(16))));
             cMercInfo.put("race", hireCol.get("Hireling"));
             cMercInfo.put("type", hireCol.get("*SubType"));
             iReader.skipBits(-32);
@@ -602,7 +608,7 @@ public class D2Character extends D2ItemListAdapter {
         } else {
             nameStr = nameStr + curNum;
         }
-        cMercInfo.put("name", D2TblFile.getString(nameStr));
+        cMercInfo.put("name", D2Files.getInstance().getTranslations().getTranslation(nameStr));
     }
 
     private void dealWithSkills() {
@@ -1402,7 +1408,7 @@ public class D2Character extends D2ItemListAdapter {
 
             try {
                 int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
-                skillTrees[page - 1] = skillTrees[page - 1] + D2TblFile.getString(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
+                skillTrees[page - 1] = skillTrees[page - 1] + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
             } catch (NumberFormatException e) {
                 //ignore
@@ -1417,7 +1423,7 @@ public class D2Character extends D2ItemListAdapter {
         if (iCharItems != null) {
             for (int i = 0; i < iCharItems.size(); i++) {
                 D2Item lItem = (D2Item) iCharItems.get(i);
-                out.append(lItem.itemDump(true));
+                out.append(D2ItemRenderer.itemDump(lItem, true));
                 out.append("\n");
             }
         }
@@ -1430,7 +1436,7 @@ public class D2Character extends D2ItemListAdapter {
         if (iMercItems != null) {
             for (int i = 0; i < iMercItems.size(); i++) {
                 D2Item lItem = (D2Item) iMercItems.get(i);
-                out.append(lItem.itemDump(true));
+                out.append(D2ItemRenderer.itemDump(lItem, true));
                 out.append("\n\n");
             }
         }

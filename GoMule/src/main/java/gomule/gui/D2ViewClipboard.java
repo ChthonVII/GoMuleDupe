@@ -22,6 +22,7 @@ package gomule.gui;
 
 import gomule.d2x.D2Stash;
 import gomule.item.D2Item;
+import gomule.item.D2ItemRenderer;
 import gomule.util.D2CellStringRenderer;
 import gomule.util.D2CellValue;
 import gomule.util.D2Project;
@@ -92,10 +93,10 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
             iIconLabel.setOpaque(true);
             iIconLabel.setBackground(Color.black);
 
-            addToPanel(new JLabel("GoMule Bank: "), 0, 2, 1, RandallPanel.NONE);
-            addToPanel(iBank, 1, 2, 1, RandallPanel.HORIZONTAL);
-            addToPanel(lPane, 0, 3, 2, RandallPanel.BOTH);
-            addToPanel(iIconLabel, 0, 4, 2, RandallPanel.BOTH);
+            addToPanel(new JLabel("GoMule Bank: "), 0, 2, 1, Constraint.NONE);
+            addToPanel(iBank, 1, 2, 1, Constraint.HORIZONTAL);
+            addToPanel(lPane, 0, 3, 2, Constraint.BOTH);
+            addToPanel(iIconLabel, 0, 4, 2, Constraint.BOTH);
 
             iTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -108,7 +109,7 @@ public class D2ViewClipboard extends RandallPanel implements D2ItemContainer, D2
                             if (iIconLabel.getIcon() == null) {
                                 iIconLabel.setIcon(iIcon);
                             }
-                            iIconLabel.setToolTipText(iItem.itemDumpHtml(false));
+                            iIconLabel.setToolTipText(D2ItemRenderer.itemDumpHtml(iItem, false));
                             iIconLabel.repaint();
                         } else {
                             iIconLabel.setIcon(null);

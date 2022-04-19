@@ -22,7 +22,9 @@ package gomule.gui;
 
 import gomule.d2s.D2Character;
 import gomule.item.D2Item;
+import gomule.item.D2ItemRenderer;
 import randall.util.RandallPanel;
+import randall.util.RandallPanel.Constraint;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -284,14 +286,14 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
         lConnectGroup.add(iConnectGoldBank);
         iConnectGoldBank.setSelected(true);
 
-        lBankPanel.addToPanel(new JLabel("Gold: "), 0, 0, 1, RandallPanel.NONE);
-        lBankPanel.addToPanel(iConnectGold, 1, 0, 1, RandallPanel.NONE);
-        lBankPanel.addToPanel(iGold, 2, 0, 1, RandallPanel.HORIZONTAL);
-        lBankPanel.addToPanel(iGoldMax, 3, 0, 1, RandallPanel.HORIZONTAL);
-        lBankPanel.addToPanel(new JLabel("Gold Stash: "), 0, 1, 1, RandallPanel.NONE);
-        lBankPanel.addToPanel(iConnectGoldBank, 1, 1, 1, RandallPanel.NONE);
-        lBankPanel.addToPanel(iGoldBank, 2, 1, 1, RandallPanel.HORIZONTAL);
-        lBankPanel.addToPanel(iGoldBankMax, 3, 1, 1, RandallPanel.HORIZONTAL);
+        lBankPanel.addToPanel(new JLabel("Gold: "), 0, 0, 1, Constraint.NONE);
+        lBankPanel.addToPanel(iConnectGold, 1, 0, 1, Constraint.NONE);
+        lBankPanel.addToPanel(iGold, 2, 0, 1, Constraint.HORIZONTAL);
+        lBankPanel.addToPanel(iGoldMax, 3, 0, 1, Constraint.HORIZONTAL);
+        lBankPanel.addToPanel(new JLabel("Gold Stash: "), 0, 1, 1, Constraint.NONE);
+        lBankPanel.addToPanel(iConnectGoldBank, 1, 1, 1, Constraint.NONE);
+        lBankPanel.addToPanel(iGoldBank, 2, 1, 1, Constraint.HORIZONTAL);
+        lBankPanel.addToPanel(iGoldBankMax, 3, 1, 1, Constraint.HORIZONTAL);
 
         RandallPanel lTransferPanel = new RandallPanel(true);
         lTransferPanel.setBorder("Transfer");
@@ -357,23 +359,23 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             }
         });
 
-        lTransferPanel.addToPanel(iGoldTransferBtns[0], 0, 0, 1, RandallPanel.NONE);
-        lTransferPanel.addToPanel(lField10000, 1, 0, 1, RandallPanel.HORIZONTAL);
-        lTransferPanel.addToPanel(iGoldTransferBtns[1], 2, 0, 1, RandallPanel.NONE);
+        lTransferPanel.addToPanel(iGoldTransferBtns[0], 0, 0, 1, Constraint.NONE);
+        lTransferPanel.addToPanel(lField10000, 1, 0, 1, Constraint.HORIZONTAL);
+        lTransferPanel.addToPanel(iGoldTransferBtns[1], 2, 0, 1, Constraint.NONE);
 
-        lTransferPanel.addToPanel(iGoldTransferBtns[2], 0, 1, 1, RandallPanel.NONE);
-        lTransferPanel.addToPanel(lField100000, 1, 1, 1, RandallPanel.HORIZONTAL);
-        lTransferPanel.addToPanel(iGoldTransferBtns[3], 2, 1, 1, RandallPanel.NONE);
+        lTransferPanel.addToPanel(iGoldTransferBtns[2], 0, 1, 1, Constraint.NONE);
+        lTransferPanel.addToPanel(lField100000, 1, 1, 1, Constraint.HORIZONTAL);
+        lTransferPanel.addToPanel(iGoldTransferBtns[3], 2, 1, 1, Constraint.NONE);
 
-        lTransferPanel.addToPanel(iGoldTransferBtns[4], 0, 2, 1, RandallPanel.NONE);
-        lTransferPanel.addToPanel(lField1000000, 1, 2, 1, RandallPanel.HORIZONTAL);
-        lTransferPanel.addToPanel(iGoldTransferBtns[5], 2, 2, 1, RandallPanel.NONE);
+        lTransferPanel.addToPanel(iGoldTransferBtns[4], 0, 2, 1, Constraint.NONE);
+        lTransferPanel.addToPanel(lField1000000, 1, 2, 1, Constraint.HORIZONTAL);
+        lTransferPanel.addToPanel(iGoldTransferBtns[5], 2, 2, 1, Constraint.NONE);
 
-        lTransferPanel.addToPanel(iGoldTransferBtns[6], 0, 3, 1, RandallPanel.NONE);
-        lTransferPanel.addToPanel(iTransferFree, 1, 3, 1, RandallPanel.HORIZONTAL);
-        lTransferPanel.addToPanel(iGoldTransferBtns[7], 2, 3, 1, RandallPanel.NONE);
+        lTransferPanel.addToPanel(iGoldTransferBtns[6], 0, 3, 1, Constraint.NONE);
+        lTransferPanel.addToPanel(iTransferFree, 1, 3, 1, Constraint.HORIZONTAL);
+        lTransferPanel.addToPanel(iGoldTransferBtns[7], 2, 3, 1, Constraint.NONE);
 
-        lBankPanel.addToPanel(lTransferPanel, 0, 10, 3, RandallPanel.HORIZONTAL);
+        lBankPanel.addToPanel(lTransferPanel, 0, 10, 3, Constraint.HORIZONTAL);
 
         lBankPanel.finishDefaultPanel();
         lTabs.addTab("Bank", lBankPanel);
@@ -382,7 +384,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
         JScrollPane dumpScroll = new JScrollPane(lDump);
         dumpScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         dumpScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        lDumpPanel.addToPanel(dumpScroll, 0, 0, 1, RandallPanel.BOTH);
+        lDumpPanel.addToPanel(dumpScroll, 0, 0, 1, Constraint.BOTH);
         lDump.setFont(new Font("monospaced", Font.PLAIN, 11));
 //		HTMLEditorKit htmlEditor = new HTMLEditorKit();
 //		lDump.setEditorKit(htmlEditor);
@@ -413,9 +415,9 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
             }
         });
 
-        lMessagePanel.addToPanel(lConnect, 0, 0, 1, RandallPanel.HORIZONTAL);
-        lMessagePanel.addToPanel(lDisconnect, 1, 0, 1, RandallPanel.HORIZONTAL);
-        lMessagePanel.addToPanel(lScroll, 0, 1, 2, RandallPanel.BOTH);
+        lMessagePanel.addToPanel(lConnect, 0, 0, 1, Constraint.HORIZONTAL);
+        lMessagePanel.addToPanel(lDisconnect, 1, 0, 1, Constraint.HORIZONTAL);
+        lMessagePanel.addToPanel(lScroll, 0, 1, 2, Constraint.BOTH);
         lTabs.addTab("Messages", lMessagePanel);
         iMessage.setText("Nothing done, disconnected");
 
@@ -1164,7 +1166,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     if (lCurrentMouse == null) {
                         D2CharPainterPanel.this.setToolTipText(null);
                     } else {
-                        D2CharPainterPanel.this.setToolTipText(lCurrentMouse.itemDumpHtml(false));
+                        D2CharPainterPanel.this.setToolTipText(D2ItemRenderer.itemDumpHtml(lCurrentMouse, false));
                     }
                 }
             });
@@ -1455,7 +1457,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                         if (iCharacter.getGolemItem() == null) {
                             return;
                         }
-                        D2MercPainterPanel.this.setToolTipText(iCharacter.getGolemItem().itemDumpHtml(false));
+                        D2MercPainterPanel.this.setToolTipText(D2ItemRenderer.itemDumpHtml(iCharacter.getGolemItem(), false));
                         return;
                     }
 
@@ -1492,7 +1494,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     if (lCurrentMouse == null) {
                         D2MercPainterPanel.this.setToolTipText(null);
                     } else {
-                        D2MercPainterPanel.this.setToolTipText(lCurrentMouse.itemDumpHtml(false));
+                        D2MercPainterPanel.this.setToolTipText(D2ItemRenderer.itemDumpHtml(lCurrentMouse, false));
                     }
                 }
             });
@@ -1656,7 +1658,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     if (lCurrentMouse == null) {
                         D2DeathPainterPanel.this.setToolTipText(null);
                     } else {
-                        D2DeathPainterPanel.this.setToolTipText(lCurrentMouse.itemDumpHtml(false));
+                        D2DeathPainterPanel.this.setToolTipText(D2ItemRenderer.itemDumpHtml(lCurrentMouse, false));
                     }
                 }
             });
@@ -2629,7 +2631,7 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
                     if (lCurrentMouse == null) {
                         D2CharCursorPainterPanel.this.setToolTipText(null);
                     } else {
-                        D2CharCursorPainterPanel.this.setToolTipText(lCurrentMouse.itemDumpHtml(false));
+                        D2CharCursorPainterPanel.this.setToolTipText(D2ItemRenderer.itemDumpHtml(lCurrentMouse, false));
                     }
                 }
             });

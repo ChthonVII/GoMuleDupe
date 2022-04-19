@@ -20,41 +20,38 @@
  ******************************************************************************/
 package randall.util;
 
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Marco
  * @version 1.0
  */
+public class RandallFileFilter extends FileFilter {
 
-import java.io.File;
-import java.util.ArrayList;
+    private final List<String> filteredExtensions = new ArrayList<>();
+    private final String description;
 
-public class RandallFileFilter
-        extends javax.swing.filechooser.FileFilter {
-    private ArrayList iExtensions;
-    private String iDescription;
-
-    public RandallFileFilter(String pDescription) {
-        iExtensions = new ArrayList();
-        iDescription = pDescription;
+    public RandallFileFilter(String description) {
+        this.description = description;
     }
 
-    public boolean accept(File pFile) {
-        for (int i = 0; i < iExtensions.size(); i++) {
-            if (pFile.isDirectory()) {
-                return true;
-            }
-            if (pFile.getAbsolutePath().toLowerCase().endsWith(((String) iExtensions.get(i)).toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
+    public boolean accept(File file) {
+        return file.isDirectory() || extensionMatches(file);
     }
 
-    public void addExtension(String pExtension) {
-        iExtensions.add(pExtension);
+    private boolean extensionMatches(File file) {
+        return filteredExtensions.stream()
+                .anyMatch(extension -> file.getAbsolutePath().toLowerCase().endsWith(extension.toLowerCase()));
+    }
+
+    public void addExtension(String extension) {
+        filteredExtensions.add(extension);
     }
 
     public String getDescription() {
-        return iDescription;
+        return description;
     }
 }

@@ -20,11 +20,20 @@
  ******************************************************************************/
 package randall.util;
 
-import java.io.File;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class RandallUtil {
-//	private static final String ICON_PATH = "/randall/images/";
+
+    private static final String DEFAULT_SEPARATOR = ",";
+
+    private RandallUtil() {
+        // Utility class
+    }
+
+    //	private static final String ICON_PATH = "/randall/images/";
 //	private static HashMap iIcons = new HashMap();
 
 //   public static ImageIcon getIcon( String iconName )
@@ -70,103 +79,54 @@ public class RandallUtil {
 //	    return icon;
 //	}
 
-    public static String merge(ArrayList pArrayList, String pJoin) {
-        String lReturn = "";
-        if (pArrayList.size() > 0) {
-            lReturn += (String) pArrayList.get(0);
-            for (int i = 1; i < pArrayList.size(); i++) {
-                lReturn += pJoin + (String) pArrayList.get(i);
-            }
-        }
-        return lReturn;
+    public static String merge(List<String> strings, String delimiter) {
+        return String.join(delimiter, strings);
     }
 
-//	public static int count(String pString, String pOccurance, boolean pIgnoreCase)
+    //	public static int count(String pString, String pOccurance, boolean pIgnoreCase)
 //	{
 //	    int lCount = 0;
-//	    
+//
 //	    int lIndex = pString.indexOf(pOccurance, 0);
 //	    while ( lIndex != -1 )
 //	    {
 //	        lCount++;
 //	        lIndex = pString.indexOf(pOccurance, lIndex+1);
 //	    }
-//	    
+//
 //	    return lCount;
 //	}
 
-    public static ArrayList split(String pString, String pSeparator, boolean pIgnoreCase) {
-        ArrayList lSplit = new ArrayList();
-        int lIndex = 0;
-        int lSeparator;
-        String lSubString;
-
-        // For (faster) uppercase comparing
-        String pCompStr;
-        String pCompSep;
-        if (pIgnoreCase) {
-            pCompStr = (pString == null) ? null : pString.toLowerCase();
-            pCompSep = (pSeparator == null) ? "," : pSeparator.toLowerCase();
-        } else {
-            pCompStr = pString;
-            pCompSep = pSeparator;
+    public static List<String> split(String sourceString, String separator, boolean ignoreCase) {
+        if (sourceString == null) {
+            return new ArrayList<>();
         }
+        String nonNullSeparator = separator == null ? DEFAULT_SEPARATOR : separator;
 
-        // In case of lengths not being equal, split while not ignoring case.
-        if (pString != null && pCompStr != null && pCompStr.length() != pString.length()) {
-            // The compare without lowercase
-            pCompStr = pString;
-            pCompSep = pSeparator;
-        }
-
-        if (pString != null) {
-            while (lIndex < pString.length()) {
-                // find first Separator starting from lIndex
-                lSeparator = pCompStr.indexOf(pCompSep, lIndex); // pCompStr.length()
-                if (lSeparator == -1) {
-                    lSubString = pString.substring(lIndex);
-                    lIndex = pString.length();
-                } else {
-                    lSubString = pString.substring(lIndex, lSeparator);
-                    lIndex = lSeparator + pSeparator.length();
-                }
-                lSplit.add(lSubString.trim());
+        if (ignoreCase) {
+            String lowerCaseString = sourceString.toLowerCase();
+            String lowerCaseSeparator = nonNullSeparator.toLowerCase();
+            if (lowerCaseString.length() == sourceString.length()
+                    && lowerCaseSeparator.length() == nonNullSeparator.length()) {
+                return split(sourceString, lowerCaseString, lowerCaseSeparator);
             }
         }
-        return lSplit;
+        return split(sourceString, sourceString, nonNullSeparator);
     }
 
-    public static String fill(int pValue, int pDigits) {
-        String lValue = Integer.toString(pValue);
+    @NotNull
+    private static List<String> split(String stringToSplit, String stringToSearch, String separator) {
+        List<String> result = new ArrayList<>();
+        for (int startIndex = 0, endIndex;
+             startIndex < stringToSearch.length(); startIndex = endIndex + separator.length()) {
 
-        if (lValue.length() > pDigits) {
-            return lValue.substring(lValue.length() - pDigits);
-        }
-
-        while (lValue.length() < pDigits) {
-            lValue = "0" + lValue;
-        }
-
-        return lValue;
-    }
-
-    public static void checkDir(String pDir) throws Exception {
-        File lDir = new File(pDir);
-
-        if (!lDir.exists()) {
-            if (!lDir.mkdirs()) {
-                throw new Exception("Can not create backup dir: " + pDir);
+            endIndex = stringToSearch.indexOf(separator, startIndex);
+            if (endIndex == -1) {
+                result.add(stringToSplit.substring(startIndex).trim());
+                break;
             }
+            result.add(stringToSplit.substring(startIndex, endIndex).trim());
         }
-        if (!lDir.isDirectory()) {
-            throw new Exception("File exists with name of backup dir: " + pDir);
-        }
-        if (!lDir.canRead()) {
-            throw new Exception("Can not read backup dir: " + pDir);
-        }
-        if (!lDir.canWrite()) {
-            throw new Exception("Can not write backup dir: " + pDir);
-        }
+        return result;
     }
-
 }
