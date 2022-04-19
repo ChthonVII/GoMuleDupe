@@ -30,6 +30,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 /**
  * @author Marco
  * <p>
@@ -149,6 +153,21 @@ public class D2Stash extends D2ItemListAdapter {
 
             if (lVersionNr == 98) {
                 readItems(lNumItems);
+            } else if (lVersionNr == 97) {
+                JDialog.setDefaultLookAndFeelDecorated(true);
+                int response = JOptionPane.showConfirmDialog(null, "This is a pre-2.4 stash file.\nIt is *probably* safe to open so long as it doesn't contain any personalized items.\nDo you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                /*
+                if (response == JOptionPane.NO_OPTION) {
+                    System.out.println("No button clicked");
+                } else if (response == JOptionPane.YES_OPTION) {
+                    System.out.println("Yes button clicked");
+                } else if (response == JOptionPane.CLOSED_OPTION) {
+                    System.out.println("JOptionPane closed");
+                }
+                */
+                if (response == JOptionPane.YES_OPTION) {
+                    readItems(lNumItems);
+                }
             } else {
                 throw new Exception("Stash Version Incorrect!");
             }
