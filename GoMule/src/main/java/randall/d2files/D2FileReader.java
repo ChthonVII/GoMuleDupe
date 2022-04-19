@@ -24,77 +24,72 @@ import gomule.gui.D2FileManager;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * @author Marco
- * <p>
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class D2FileReader {
-    //	private String	iFileName;
-    protected byte iBuffer[];
 
-    private int iCounterPos = 0;
-    private int iCounterBit = 0;
+    protected byte[] buffer;
 
-    public D2FileReader(String pFileName) {
-        File lFile = new File(pFileName);
-        if (lFile.exists() && lFile.isFile() && lFile.canRead()) {
-            try {
-                iBuffer = new byte[(int) lFile.length()];
-                FileInputStream lIn = new FileInputStream(lFile);
-                lIn.read(iBuffer);
-                lIn.close();
+    //    private String fileName;
+    private int counterPosition = 0;
+    private int counterBit = 0;
+
+    public D2FileReader(String pathToFile) {
+        File file = new File(pathToFile);
+        if (file.exists() && file.isFile() && file.canRead()) {
+            try (InputStream fileInputStream = Files.newInputStream(file.toPath())) {
+                buffer = new byte[(int) file.length()];
+                fileInputStream.read(buffer);
             } catch (Exception pEx) {
-                iBuffer = null;
+                buffer = null;
                 D2FileManager.displayErrorDialog(pEx);
             }
         }
     }
 
-    public D2FileReader(byte pBuffer[]) {
-        iBuffer = pBuffer;
+    public D2FileReader(byte[] buffer) {
+        this.buffer = buffer;
     }
 
     public void increaseCounter(int pNrBits) {
         for (int i = 0; i < pNrBits; i++) {
-            iCounterBit++;
-            if (iCounterBit > 7) {
-                iCounterBit = 0;
-                iCounterPos++;
+            counterBit++;
+            if (counterBit > 7) {
+                counterBit = 0;
+                counterPosition++;
             }
         }
     }
 
     public int getCounterPos() {
-        return iCounterPos;
+        return counterPosition;
     }
 
     public int getCounterBit() {
-        return iCounterBit;
+        return counterBit;
     }
 
-    public void setCounter(int pCharPos, int pBitNr) {
-        iCounterPos = pCharPos;
-        iCounterBit = pBitNr;
+    public void setCounter(int counterPosition, int counterBit) {
+        this.counterPosition = counterPosition;
+        this.counterBit = counterBit;
     }
 
-    public boolean getCounterBoolean() {
+    private boolean getCounterBoolean() {
         int lNr = 1;
-        if (iCounterBit > 0) {
-            lNr = lNr << iCounterBit;
+        if (counterBit > 0) {
+            lNr = lNr << counterBit;
         }
-
-        boolean lBoolean = ((iBuffer[iCounterPos] & lNr) > 0);
-
+        boolean lBoolean = ((buffer[counterPosition] & lNr) > 0);
         increaseCounter(1);
         return lBoolean;
     }
 
     public String getCounterString() {
-        StringBuffer lBuffer = new StringBuffer();
-
+        StringBuilder builder = new StringBuilder();
         int lInt = 0;
         try {
             lInt = getCounterInt(8);
@@ -103,19 +98,17 @@ public class D2FileReader {
         }
         while (lInt != 0) {
             try {
-                lBuffer.append((char) lInt);
+                builder.append((char) lInt);
                 lInt = getCounterInt(8);
             } catch (Exception pEx) {
                 lInt = 0;
             }
         }
-
-        return lBuffer.toString();
+        return builder.toString();
     }
 
     public String getCounterString(int pCharNr) {
-        char lBuffer[] = new char[pCharNr];
-
+        char[] lBuffer = new char[pCharNr];
         for (int lCharNr = 0; lCharNr < pCharNr; lCharNr++) {
             lBuffer[lCharNr] = 0;
             for (int lBitNr = 0; lBitNr < 8; lBitNr++) {
@@ -131,50 +124,38 @@ public class D2FileReader {
                 }
             }
         }
-
         return new String(lBuffer);
     }
 
     public long getCounterLong(int pBitNr) {
         long lInt = 0;
-
-        boolean lIntCount[] = new boolean[pBitNr];
+        boolean[] lIntCount = new boolean[pBitNr];
 
         for (int i = 0; i < pBitNr; i++) {
             lIntCount[i] = getCounterBoolean();
         }
-
         for (int i = pBitNr - 1; i >= 0; i--) {
             lInt = lInt << 1;
             if (lIntCount[i]) {
                 lInt++;
             }
-
         }
-
         return lInt;
     }
-
 
     public int getCounterInt(int pBitNr) {
         int lInt = 0;
-
-        boolean lIntCount[] = new boolean[pBitNr];
+        boolean[] lIntCount = new boolean[pBitNr];
 
         for (int i = 0; i < pBitNr; i++) {
             lIntCount[i] = getCounterBoolean();
         }
-
         for (int i = pBitNr - 1; i >= 0; i--) {
             lInt = lInt << 1;
             if (lIntCount[i]) {
                 lInt++;
             }
-
         }
-
         return lInt;
     }
-
-
 }

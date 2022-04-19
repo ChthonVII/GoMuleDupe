@@ -27,15 +27,21 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Marco
- * <p>
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public final class D2TxtFile {
+
+    private static final String DELIMITER = "	";
+
     public static D2TxtFile MISC;
     public static D2TxtFile ARMOR;
     public static D2TxtFile WEAPONS;
@@ -56,30 +62,29 @@ public final class D2TxtFile {
     public static D2TxtFile FULLSET;
     public static D2TxtFile CHARSTATS;
     public static D2TxtFile AUTOMAGIC;
-    //	/**
-//	* DROP CALC
-//	*/
+    /*
+     * DROP CALC
+     */
     public static D2TxtFile MONSTATS;
     public static D2TxtFile TCS;
     public static D2TxtFile LEVELS;
     public static D2TxtFile SUPUNIQ;
     public static D2TxtFile ITEMRATIO;
-    private static String sMod;
+
+    private static String folder;
     private static boolean read = false;
-    private String iFileName;
-    private String[] iHeader;
-    private String[][] iData;
 
+    private final String fileName;
+    private List<String> header;
+    private List<List<String>> data;
 
-    private D2TxtFile(String pFileName) {
-        iFileName = pFileName;
-
+    private D2TxtFile(String fileName) {
+        this.fileName = fileName;
     }
 
-    public static void constructTxtFiles(String pMod) {
-
+    public static void constructTxtFiles(String folder) {
         if (read) return;
-        sMod = pMod;
+        D2TxtFile.folder = folder;
         MISC = new D2TxtFile("misc");
         ARMOR = new D2TxtFile("armor");
         WEAPONS = new D2TxtFile("weapons");
@@ -105,7 +110,6 @@ public final class D2TxtFile {
         CHARSTATS = new D2TxtFile("charstats");
         AUTOMAGIC = new D2TxtFile("automagic");
         ITEMRATIO = new D2TxtFile("itemRatio");
-
         read = true;
     }
 
@@ -125,218 +129,178 @@ public final class D2TxtFile {
                 return "Druid";
             case 6:
                 return "Assassin";
+            default:
+                return "<none>";
         }
-        return "<none>";
     }
 
-    public static ArrayList propToStat(String pCode, String pMin, String pMax, String pParam, int qFlag) {
-
-        ArrayList outArr = new ArrayList();
-        for (int x = 1; x < 8; x++) {
-
-            String propsStatCode = D2TxtFile.PROPS.searchColumns("code", pCode).get("stat" + x);
-            if (propsStatCode.equals("")) {
-                if (pCode.equals("dmg%") && x == 1) {
-                    propsStatCode = "item_maxdamage_percent";
-                } else {
-                    break;
-                }
-            }
-
-            int[] pVals = {0, 0, 0};
-
-            if (!pMin.equals("")) {
-                try {
-                    pVals[0] = Integer.parseInt(pMin);
-                } catch (NumberFormatException e) {
-                    return outArr;
-                }
-            }
-            ;
-
-            if (!pMax.equals("")) {
-                try {
-                    pVals[1] = Integer.parseInt(pMax);
-                } catch (NumberFormatException e) {
-                    return outArr;
-                }
-            }
-            ;
-
-            if (!pParam.equals("")) {
-                try {
-                    pVals[2] = Integer.parseInt(pParam);
-                } catch (NumberFormatException e) {
-                    return outArr;
-                }
-            }
-            ;
-
-            if (propsStatCode.indexOf("max") != -1) {
-                pVals[0] = pVals[1];
-            } else if (propsStatCode.indexOf("length") != -1) {
-                if (pVals[2] != 0) {
-                    pVals[0] = pVals[2];
-                }
-            }
-            pVals[2] = 0;
-
-            if (propsStatCode.equals("item_addclassskills")) {
-                pVals[0] = Integer.parseInt(D2TxtFile.PROPS.searchColumns("code", pCode).get("val1"));
-            }
-
-            outArr.add(new D2Prop(Integer.parseInt(D2TxtFile.ITEM_STAT_COST.searchColumns("Stat", propsStatCode).get("*ID")), pVals, qFlag));
-
+    public static List<D2Prop> propToStat(
+            String propertyCode, String minStr, String maxStr, String paramStr, int qFlag) {
+        try {
+            int min = minStr.equals("") ? 0 : Integer.parseInt(minStr);
+            int max = maxStr.equals("") ? 0 : Integer.parseInt(maxStr);
+            int param = paramStr.equals("") ? 0 : Integer.parseInt(paramStr);
+            return propToStat(propertyCode, min, max, param, qFlag);
+        } catch (NumberFormatException e) {
+            return emptyList();
         }
-        return outArr;
-
     }
 
-    public static D2TxtFileItemProperties search(String pCode) {
-        D2TxtFileItemProperties lFound = MISC.searchColumns("code", pCode);
-        if (lFound == null) {
-            lFound = ARMOR.searchColumns("code", pCode);
+    private static List<D2Prop> propToStat(String propertyCode, int minStr, int maxStr, int paramStr, int qFlag) {
+        D2TxtFileItemProperties propertiesRow = D2TxtFile.PROPS.searchColumnUnsafe("code", propertyCode);
+        List<D2Prop> d2Props = new ArrayList<>();
+        for (int index = 1; index < 8; index++) {
+            String statValue = calcStatValue(propertyCode, propertiesRow, index);
+            if (statValue == null) {
+                break;
+            }
+            int id = searchIdStat(statValue);
+            int min = calcMin(minStr, maxStr, paramStr, statValue, propertiesRow);
+            d2Props.add(new D2Prop(id, new int[]{min, maxStr, 0}, qFlag));
         }
-        if (lFound == null) {
-            lFound = WEAPONS.searchColumns("code", pCode);
+        return d2Props;
+    }
+
+    private D2TxtFileItemProperties searchColumnUnsafe(String columnName, String propertyCode) {
+        D2TxtFileItemProperties propertiesRow = searchColumn(columnName, propertyCode);
+        if (propertiesRow == null) {
+            throw new IllegalArgumentException("'" + columnName + "' column value not found: " + propertyCode);
         }
-        return lFound;
+        return propertiesRow;
+    }
+
+    private static String calcStatValue(String propertyCode, D2TxtFileItemProperties propertiesRow, int index) {
+        String statValue = propertiesRow.get("stat" + index);
+        if (!statValue.equals("")) {
+            return statValue;
+        }
+        if (propertyCode.equals("dmg%") && index == 1) {
+            return "item_maxdamage_percent";
+        }
+        return null;
+    }
+
+    private static int searchIdStat(String statValue) {
+        D2TxtFileItemProperties stat = D2TxtFile.ITEM_STAT_COST.searchColumnUnsafe("Stat", statValue);
+        return Integer.parseInt(stat.get("*ID"));
+    }
+
+    private static int calcMin(int min, int max, int param, String statValue, D2TxtFileItemProperties propertiesRow) {
+        if (statValue.contains("max")) {
+            return max;
+        } else if (statValue.contains("length") && param != 0) {
+            return param;
+        }
+        if (statValue.equals("item_addclassskills")) {
+            return Integer.parseInt(propertiesRow.get("val1"));
+        }
+        return min;
+    }
+
+    public static D2TxtFileItemProperties search(String columnValue) {
+        return Stream.of(MISC, ARMOR, WEAPONS)
+                .map(d2TxtFile -> d2TxtFile.searchColumn("code", columnValue))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     public String getFileName() {
-        return iFileName;
+        return fileName;
     }
 
     public int getRowSize() {
-        if (iData == null) {
-            readInData();
-        }
-        return iData.length;
+        init();
+        return data.size();
     }
 
-    private void readInData() {
-        try {
-            ArrayList strArr = new ArrayList();
-            FileReader lFileIn = new FileReader(sMod + File.separator + iFileName + ".txt");
-            BufferedReader lIn = new BufferedReader(lFileIn);
-            String lFirstLine = lIn.readLine();
+    private void init() {
+        if (data != null) {
+            return;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(folder + File.separator + fileName + ".txt"))) {
+            header = asList(reader.readLine().split(DELIMITER));
+            data = reader.lines()
+                    .map(line -> asList(line.split(DELIMITER)))
+                    .filter(this::meaningfulRow)
+                    .collect(toList());
+        } catch (Exception ex) {
+            D2FileManager.displayErrorDialog(ex);
+        }
+    }
 
-            Pattern p = Pattern.compile("	");
-            iHeader = p.split(lFirstLine);
-            String lLine = lIn.readLine();
+    private boolean meaningfulRow(List<String> values) {
+        return !asList("UniqueItems", "SetItems").contains(fileName)
+                || !values.isEmpty() && !values.get(0).equals("Expansion");
+    }
 
-            boolean lSkipExpansion = "UniqueItems".equals(iFileName) || "SetItems".equals(iFileName);
-            while (lLine != null) {
-                String[] lineArr = p.split(lLine);
-                if (lineArr.length > 0 && lSkipExpansion && lineArr[0].equals("Expansion")) {
-
-                } else {
-//					iData.add(lSplit);
-                    strArr.add(lineArr);
-                }
-                lLine = lIn.readLine();
+    String getValue(String columnName, int rowNumber) {
+        int columnNumber = findColumnNumber(columnName);
+        if (columnNumber != -1 && rowNumber < data.size()) {
+            List<String> row = data.get(rowNumber);
+            if (columnNumber < row.size()) {
+                return row.get(columnNumber);
             }
-
-            lFileIn.close();
-            lIn.close();
-
-            iData = new String[strArr.size()][];
-            strArr.toArray(iData);
-
-        } catch (Exception pEx) {
-            D2FileManager.displayErrorDialog(pEx);
         }
-    }
-
-    protected String getValue(int pRowNr, String pCol) {
-        int lColNr = getCol(pCol);
-
-        if (lColNr != -1 && pRowNr < iData.length && iData[pRowNr].length > lColNr) {
-            return iData[pRowNr][lColNr];
-        }
-
         return "";
     }
 
-    private int getCol(String col) {
-
-        if (iData == null) {
-            readInData();
-        }
-
-        for (int x = 0; x < iHeader.length; x++) {
-            if (iHeader[x].equals(col)) {
-                return x;
-            }
-        }
-
-        return -1;
+    private int findColumnNumber(String columnName) {
+        init();
+        return header.indexOf(columnName);
     }
 
     public D2TxtFileItemProperties getRow(int pRowNr) {
         return new D2TxtFileItemProperties(this, pRowNr);
     }
 
-    public D2TxtFileItemProperties searchColumns(String pCol, String pText) {
-
-        int lColNr = getCol(pCol);
-
-        if (lColNr != -1) {
-            for (int i = 0; i < iData.length; i++) {
-                if (iData[i].length - 1 >= lColNr) {
-                    if (iData[i][lColNr].equals(pText)) {
-                        return new D2TxtFileItemProperties(this, i);
-                    }
-                }
-            }
-        }
-
-        return null;
+    public D2TxtFileItemProperties searchColumn(String columnName, String columnValue) {
+        List<D2TxtFileItemProperties> result = searchColumns(columnName, columnValue, true);
+        return result.isEmpty() ? null : result.get(0);
     }
 
-    public ArrayList searchColumnsMultipleHits(String pCol, String pText) {
-        ArrayList hits = new ArrayList();
-        int lColNr = getCol(pCol);
+    public List<D2TxtFileItemProperties> searchColumns(String columnName, String columnValue) {
+        return searchColumns(columnName, columnValue, false);
+    }
 
-        if (lColNr != -1) {
-            for (int i = 0; i < iData.length; i++) {
-                if (iData[i].length - 1 >= lColNr) {
-                    if (iData[i][lColNr].equals(pText)) {
-                        hits.add(new D2TxtFileItemProperties(this, i));
-                    }
-                }
+    private List<D2TxtFileItemProperties> searchColumns(String columnName, String columnValue, boolean single) {
+        int columnNumber = findColumnNumber(columnName);
+        if (columnNumber == -1) {
+            return emptyList();
+        }
+        List<D2TxtFileItemProperties> hits = new ArrayList<>();
+        for (int rowNumber = 0; rowNumber < data.size(); rowNumber++) {
+            List<String> row = data.get(rowNumber);
+            if (columnNumber < row.size() && row.get(columnNumber).equals(columnValue)) {
+                hits.add(new D2TxtFileItemProperties(this, rowNumber));
+                if (single) break;
             }
         }
-
         return hits;
     }
 
-    public D2TxtFileItemProperties searchRuneWord(ArrayList pList) {
-        int lRuneNr[] = new int[]{getCol("Rune1"), getCol("Rune2"), getCol("Rune3"), getCol("Rune4"), getCol("Rune5"), getCol("Rune6")};
-        for (int i = 0; i < iData.length; i++) {
-            ArrayList lRW = new ArrayList();
-            for (int j = 0; j < lRuneNr.length; j++) {
-                String lFile = iData[i][lRuneNr[j]];
-
-                if (lFile != null && !lFile.equals("")) {
-                    lRW.add(lFile);
-                } else {
-                    break;
-                }
-            }
-
-            if (pList.size() == lRW.size()) {
-                boolean lIsRuneWord = true;
-                for (int j = 0; j < pList.size() && lIsRuneWord; j++) {
-                    if (!((String) lRW.get(j)).equals((String) pList.get(j))) {
-                        lIsRuneWord = false;
-                    }
-                }
-                if (lIsRuneWord) {
-                    return new D2TxtFileItemProperties(this, i);
-                }
+    public D2TxtFileItemProperties searchRuneWord(List<String> runesEmbedded) {
+        List<Integer> runeColumnNumbers = asList(
+                findColumnNumber("Rune1"),
+                findColumnNumber("Rune2"),
+                findColumnNumber("Rune3"),
+                findColumnNumber("Rune4"),
+                findColumnNumber("Rune5"),
+                findColumnNumber("Rune6")
+        );
+        for (int rowNumber = 0; rowNumber < data.size(); rowNumber++) {
+            List<String> row = data.get(rowNumber);
+            if (runesEmbedded.equals(getRuneWord(row, runeColumnNumbers))) {
+                return new D2TxtFileItemProperties(this, rowNumber);
             }
         }
         return null;
+    }
+
+    private List<String> getRuneWord(List<String> row, List<Integer> runeColumnNumbers) {
+        return runeColumnNumbers.stream()
+                .map(row::get)
+                .filter(rune -> rune != null && !rune.equals(""))
+                .collect(toList());
     }
 }

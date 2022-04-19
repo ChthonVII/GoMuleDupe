@@ -41,6 +41,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 //a character class
 //manages one character file
@@ -203,7 +204,7 @@ public class D2Character extends D2ItemListAdapter {
         if (iReader.read(32) != 0) {
             cMercInfo = new HashMap();
             iReader.skipBits(16);
-            D2TxtFileItemProperties hireCol = (D2TxtFileItemProperties) Iterables.getLast(D2TxtFile.HIRE.searchColumnsMultipleHits("Id", Long.toString(iReader.read(16))));
+            D2TxtFileItemProperties hireCol = Iterables.getLast(D2TxtFile.HIRE.searchColumns("Id", Long.toString(iReader.read(16))));
             cMercInfo.put("race", hireCol.get("Hireling"));
             cMercInfo.put("type", hireCol.get("*SubType"));
             iReader.skipBits(-32);
@@ -310,16 +311,16 @@ public class D2Character extends D2ItemListAdapter {
         cStats[20] = cStats[20] + (10 * resCounter);
         cStats[21] = cStats[21] + (10 * resCounter);
         if (hasMerc()) {
-            ArrayList hireArr = D2TxtFile.HIRE.searchColumnsMultipleHits("*SubType", getMercType());
+            List<D2TxtFileItemProperties> hireArr = D2TxtFile.HIRE.searchColumns("*SubType", getMercType());
             for (int x = 0; x < hireArr.size(); x = x + 1) {
-                if (((D2TxtFileItemProperties) hireArr.get(x)).get("Version").equals("100") && Integer.parseInt(((D2TxtFileItemProperties) hireArr.get(x)).get("Level")) <= getMercLevel()) {
-                    mercHireCol = (D2TxtFileItemProperties) hireArr.get(x);
+                if (hireArr.get(x).get("Version").equals("100") && Integer.parseInt(hireArr.get(x).get("Level")) <= getMercLevel()) {
+                    mercHireCol = hireArr.get(x);
                 }
             }
             if (mercHireCol == null) {
                 for (int x = 0; x < hireArr.size(); x = x + 1) {
-                    if (((D2TxtFileItemProperties) hireArr.get(x)).get("Version").equals("100") && Integer.parseInt(((D2TxtFileItemProperties) hireArr.get(x)).get("Level")) > getMercLevel()) {
-                        mercHireCol = (D2TxtFileItemProperties) hireArr.get(x);
+                    if (hireArr.get(x).get("Version").equals("100") && Integer.parseInt(hireArr.get(x).get("Level")) > getMercLevel()) {
+                        mercHireCol = hireArr.get(x);
                         break;
                     }
                 }
@@ -475,7 +476,7 @@ public class D2Character extends D2ItemListAdapter {
         iSkillLocs = D2BodyLocations.generateSkillLocs((int) lCharCode);
         initSkills = new int[3][10];
         cSkills = new int[3][10];
-        D2TxtFileItemProperties initRow = D2TxtFile.SKILLS.searchColumns("charclass", cClass);
+        D2TxtFileItemProperties initRow = D2TxtFile.SKILLS.searchColumn("charclass", cClass);
         iReader.set_byte_pos(iIF);
         byte skillInitialBytes[] = iReader.get_bytes(32);
         D2FileReader skillReader = new D2FileReader(skillInitialBytes);
@@ -483,7 +484,7 @@ public class D2Character extends D2ItemListAdapter {
         skillReader.getCounterInt(8);
         int tree = 0;
         for (int x = 0; x < 30; x = x + 1) {
-            tree = Integer.parseInt((D2TxtFile.SKILL_DESC.searchColumns("skilldesc", D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc"))).get("SkillPage"));
+            tree = Integer.parseInt((D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(initRow.getRowNum() + x).get("skilldesc"))).get("SkillPage"));
             initSkills[tree - 1][skillC[tree - 1]] = skillReader.getCounterInt(8);
             skillC[tree - 1]++;
         }
@@ -1400,15 +1401,15 @@ public class D2Character extends D2ItemListAdapter {
         out.append(getStatString());
         out.append("\n\n");
 
-        ArrayList skillArr = D2TxtFile.SKILLS.searchColumnsMultipleHits("charclass", cClass);
+        List<D2TxtFileItemProperties> skillArr = D2TxtFile.SKILLS.searchColumns("charclass", cClass);
         String[] skillTrees = new String[]{"", "", ""};
         int[] skillCounter = new int[3];
 
         for (int x = 0; x < skillArr.size(); x = x + 1) {
 
             try {
-                int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
-                skillTrees[page - 1] = skillTrees[page - 1] + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
+                int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(skillArr.get(x).get("*Id")))).get("SkillPage"));
+                skillTrees[page - 1] = skillTrees[page - 1] + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", skillArr.get(x).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
             } catch (NumberFormatException e) {
                 //ignore
@@ -1465,11 +1466,11 @@ public class D2Character extends D2ItemListAdapter {
     }
 
     private void addSetItem(D2Item item) {
-        int setNo = D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(item.getSetID())).get("set")).getRowNum();
+        int setNo = D2TxtFile.FULLSET.searchColumn("index", D2TxtFile.SETITEMS.searchColumn("*ID", String.valueOf(item.getSetID())).get("set")).getRowNum();
         setTracker[setNo][0]++;
         for (int x = 0; x < iCharItems.size(); x++) {
             if (!((D2Item) iCharItems.get(x)).isEquipped(curWep)) continue;
-            if (D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
+            if (D2TxtFile.FULLSET.searchColumn("index", D2TxtFile.SETITEMS.searchColumn("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
                 modSetProps(((D2Item) iCharItems.get(x)), setTracker[setNo], 1);
             }
         }
@@ -1510,13 +1511,13 @@ public class D2Character extends D2ItemListAdapter {
 
     private void remSetItem(D2Item item) {
 
-        int setNo = D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(item.getSetID())).get("set")).getRowNum();
+        int setNo = D2TxtFile.FULLSET.searchColumn("index", D2TxtFile.SETITEMS.searchColumn("*ID", String.valueOf(item.getSetID())).get("set")).getRowNum();
         //Since the item we have just removed is no longer equipped (so not in icharitems) we need
         //to remove it first.
         modSetProps(item, new int[]{0}, -1);
         for (int x = 0; x < iCharItems.size(); x++) {
             if (!((D2Item) iCharItems.get(x)).isEquipped(curWep)) continue;
-            if (D2TxtFile.FULLSET.searchColumns("index", D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
+            if (D2TxtFile.FULLSET.searchColumn("index", D2TxtFile.SETITEMS.searchColumn("*ID", String.valueOf(((D2Item) (iCharItems.get(x))).getSetID())).get("set")).getRowNum() == setNo) {
                 modSetProps(((D2Item) iCharItems.get(x)), setTracker[setNo], -1);
             }
         }
@@ -1607,7 +1608,7 @@ public class D2Character extends D2ItemListAdapter {
                 iBlock = iBlock + ((D2Item) iCharItems.get(x)).getBlock();
             }
         }
-        return (int) Math.floor(((cStats[30] + iBlock + Integer.parseInt(D2TxtFile.CHARSTATS.searchColumns("class", getCharClass()).get("BlockFactor"))) * (getCharDex() - 15)) / (iCharLevel * 2));
+        return (int) Math.floor(((cStats[30] + iBlock + Integer.parseInt(D2TxtFile.CHARSTATS.searchColumn("class", getCharClass()).get("BlockFactor"))) * (getCharDex() - 15)) / (iCharLevel * 2));
     }
 
     public void addItem(D2Item item) {

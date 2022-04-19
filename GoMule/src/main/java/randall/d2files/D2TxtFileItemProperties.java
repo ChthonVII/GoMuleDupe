@@ -22,60 +22,54 @@ package randall.d2files;
 
 /**
  * @author Marco
- * <p>
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class D2TxtFileItemProperties {
-    private D2TxtFile iTxtFile;
-    private int iRowNr;
 
-    public D2TxtFileItemProperties(D2TxtFile pTxtFile, int pRowNr) {
-        iTxtFile = pTxtFile; // iTxtFile.getRowNr()
-        iRowNr = pRowNr;
+    private final D2TxtFile txtFile;
+    private final int rowNumber;
+
+    public D2TxtFileItemProperties(D2TxtFile txtFile, int rowNumber) {
+        this.txtFile = txtFile; // txtFile.getRowNr()
+        this.rowNumber = rowNumber;
     }
 
-    public String get(String pKey) {
-//    	int x = 1;
-//    	if(pKey.equals("str name")){
-////    	while(x==1){
-//    	int test = 221;
-//    	if(D2Files.getInstance().getTranslations().getTranslation(iTxtFile.getValue(test, "str name")) != null){
-//    	System.out.println(D2Files.getInstance().getTranslations().getTranslation(iTxtFile.getValue(test, "str name")));
-//    	System.out.println((iTxtFile.getFileName()));
-//    	System.out.println("bl");
-////    	}
-//    	}
-//    	}
-        return iTxtFile.getValue(iRowNr, pKey);
-    }
-
-    public String getFileName() {
-        return iTxtFile.getFileName();
-    }
-
-    public String getName() {
-//        if ( iTxtFile == D2TxtFile.MISC )
-//        {
-//            String lType = iTxtFile.getValue(iRowNr, "type");
-//            if ( lType != null && !"".equals(lType.trim()))
-//            {
-//                D2TxtFileItemProperties lItemType = D2TxtFile.ITEMTYPES.searchColumns("Code", lType);
-//                if ( lItemType != null )
-//                {
-//                    return lItemType.get("ItemType");
+    public String get(String propertyName) {
+//        int x = 1;
+//        if (propertyName.equals("str name")) {
+//            while (x == 1) {
+//                int test = 221;
+//                if (D2Files.getInstance().getTranslations().getTranslation(txtFile.getValue(test, "str name")) != null) {
+//                    System.out.println(D2Files.getInstance().getTranslations().getTranslation(txtFile.getValue(test, "str name")));
+//                    System.out.println((txtFile.getFileName()));
+//                    System.out.println("bl");
 //                }
 //            }
 //        }
-        return iTxtFile.getValue(iRowNr, "name");
+        return txtFile.getValue(propertyName, rowNumber);
+    }
+
+    public String getFileName() {
+        return txtFile.getFileName();
+    }
+
+    public String getName() {
+//        if (txtFile == D2TxtFile.MISC) {
+//            String type = txtFile.getValue(rowNumber, "type");
+//            if (type != null && !"".equals(type.trim())) {
+//                D2TxtFileItemProperties itemType = D2TxtFile.ITEMTYPES.searchColumns("Code", type);
+//                if (itemType != null) {
+//                    return itemType.get("ItemType");
+//                }
+//            }
+//        }
+        return txtFile.getValue("name", rowNumber);
     }
 
     public String getTblName() {
-        return iTxtFile.getValue(iRowNr, "transtbl");
+        return txtFile.getValue("transtbl", rowNumber);
     }
 
     public int getRowNum() {
-        return iRowNr;
+        return rowNumber;
     }
-
 }
