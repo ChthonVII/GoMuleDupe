@@ -589,7 +589,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             } finally {
                 iStash.listenItemListEvents();
             }
-            itemListChanged();
+            if (!dupeit){
+                itemListChanged();
+            }
         }
     }
 
