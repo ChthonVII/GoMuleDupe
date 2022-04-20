@@ -718,6 +718,64 @@ public class D2ViewChar extends JInternalFrame implements D2ItemContainer, D2Ite
         }
     }
 
+    
+    public void putOnCharacterFromFreeFloatingList(int areaCode, ArrayList dropList) {
+
+        iCharacter.ignoreItemListEvents();
+        int dPanel = 0;
+        int rMax = 0;
+        int cMax = 0;
+        switch (areaCode) {
+            case 0:
+                //stash
+                dPanel = 5;
+                rMax = D2Character.STASHSIZEY;
+                cMax = D2Character.STASHSIZEX;
+                break;
+            case 1:
+                //inv
+                dPanel = 1;
+                rMax = D2Character.INVSIZEY;
+                cMax = D2Character.INVSIZEX;
+                break;
+            case 2:
+                //cube
+                dPanel = 4;
+                rMax = D2Character.CUBESIZEY;
+                cMax = D2Character.CUBESIZEX;
+                break;
+        }
+        try {
+            for (int z = dropList.size() - 1; z > -1; z--) {
+                D2Item lDropItem = (D2Item) dropList.get(z);
+                //D2Item dupe = new D2Item(lDropItem);
+                //boolean trashbool = dupe.randomizeFingerprint();
+                for (int x = 0; x < rMax; x++) {
+                    for (int y = 0; y < cMax; y++) {
+                        if (iCharacter.checkCharGrid(dPanel, y, x, lDropItem)) {
+                            lDropItem.set_panel((short) dPanel);
+                            lDropItem.set_location((short) 0);
+                            lDropItem.set_body_position((short) 0);
+                            lDropItem.set_row((short) x);
+                            lDropItem.set_col((short) y);
+                            iCharacter.markCharGrid(lDropItem);
+                            //D2ViewClipboard.removeItem(lDropItem);
+                            dropList.remove(lDropItem);
+                            iCharacter.addCharItem(lDropItem);
+                            iCharacter.equipItem(lDropItem);
+                            paintCharStats();
+                            x = rMax;
+                            y = cMax;
+                        }
+                    }
+                }
+            }
+        } finally {
+            iCharacter.listenItemListEvents();
+            iCharacter.fireD2ItemListEvent();
+        }
+    }
+    
     class MyMouse extends MouseAdapter {
 
         public void mouseClicked(MouseEvent e) {

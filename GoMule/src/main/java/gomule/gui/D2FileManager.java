@@ -96,6 +96,7 @@ public class D2FileManager extends JFrame {
     private JComboBox iChangeProject;
 
     private JButton dropAll;
+    private JButton dropAllDupe;
 
     private JButton pickFrom;
 
@@ -627,6 +628,61 @@ public class D2FileManager extends JFrame {
                 }
             }
         });
+        
+        dropAllDupe = new JButton("Dupe & Drop All");
+        dropAllDupe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()) > -1) {
+                    D2ItemContainer d2ItemContainer = (D2ItemContainer) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()));
+                    D2ItemList iList = d2ItemContainer.getItemLists();
+                    iList.ignoreItemListEvents();
+                    try {
+                        if (((D2ItemContainer) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))).getFileName().endsWith(".d2s")) {
+
+                            D2ViewChar iCharacter = ((D2ViewChar) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame())));
+                            List<D2Item> items = D2ViewClipboard.getItemList();
+                            ArrayList<D2Item> dupes = new ArrayList<>();
+                            for (D2Item item : items) {
+                                D2Item dupe = new D2Item(item);
+                                boolean trashbool = dupe.randomizeFingerprint();
+                                dupes.add(dupe);
+                            }
+                            for (int x = 2; x > -1; x--) {
+                                //iCharacter.putOnCharacter(x, D2ViewClipboard.getItemList());
+                                //iCharacter.dupeAndPutOnCharacter(x, D2ViewClipboard.getItemList());
+                                iCharacter.putOnCharacterFromFreeFloatingList(x, dupes);
+                            }
+                        } else if (d2ItemContainer instanceof D2ViewSharedStash) {
+                            D2ViewSharedStash viewSharedStash = ((D2ViewSharedStash) d2ItemContainer);
+                            
+                            List<D2Item> items = D2ViewClipboard.getItemList();
+                            List<D2Item> dupes = new ArrayList<>();
+                            for (D2Item item : items) {
+                                D2Item dupe = new D2Item(item);
+                                boolean trashbool = dupe.randomizeFingerprint();
+                                dupes.add(dupe);
+                            }
+                            List<D2Item> successfullyAddedItems = viewSharedStash.getSharedStashPanel().tryToAddItems(dupes);
+                        } else {
+                            List<D2Item> items = D2ViewClipboard.getItemList();
+                            for (D2Item item : items) {
+                                D2Item dupe = new D2Item(item);
+                                boolean trashbool = dupe.randomizeFingerprint();
+                                iList.addItem(dupe);
+                            }
+                        
+                            //ArrayList lItemList = D2ViewClipboard.getItemList()();
+                            //while (lItemList.size() > 0) {
+                            //    iList.addItem((D2Item) lItemList.remove(0));
+                            //}
+                        }
+                    } finally {
+                        iList.listenItemListEvents();
+                        iList.fireD2ItemListEvent();
+                    }
+                }
+            }
+        });
 
         pickFrom = new JButton("Pickup From ...");
         pickChooser = new JComboBox(new String[]{"Stash", "Inventory", "Cube", "Equipped"});
@@ -696,6 +752,7 @@ public class D2FileManager extends JFrame {
         itemControl.addToPanel(dropAll, 1, 0, 1, Constraint.HORIZONTAL);
 
         itemControl.addToPanel(pickAllDupe, 0, 1, 1, Constraint.HORIZONTAL);
+        itemControl.addToPanel(dropAllDupe, 1, 1, 1, Constraint.HORIZONTAL);
         
         //itemControl.addToPanel(pickFrom, 0, 1, 2, Constraint.HORIZONTAL);
         itemControl.addToPanel(pickFrom, 0, 2, 2, Constraint.HORIZONTAL);
@@ -1430,6 +1487,7 @@ public class D2FileManager extends JFrame {
                     dropTo.setEnabled(false);
                     dropChooser.setEnabled(false);
                     dropAll.setEnabled(true);
+                    dropAllDupe.setEnabled(true);
                     flavieSingle.setEnabled(true);
                     dumpBut.setEnabled(true);
                 } else if (((D2ItemContainer) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))).getFileName().endsWith(".d2s")) {
@@ -1438,6 +1496,7 @@ public class D2FileManager extends JFrame {
                     dropTo.setEnabled(true);
                     dropChooser.setEnabled(true);
                     dropAll.setEnabled(true);
+                    dropAllDupe.setEnabled(true);
                     flavieSingle.setEnabled(true);
                     dumpBut.setEnabled(true);
                 } else if (((D2ItemContainer) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))).getFileName().endsWith(".d2i")) {
@@ -1448,6 +1507,7 @@ public class D2FileManager extends JFrame {
                     pickAll.setEnabled(true);
                     pickAllDupe.setEnabled(true);
                     dropAll.setEnabled(true);
+                    dropAllDupe.setEnabled(true);
                     flavieSingle.setEnabled(true);
                     dumpBut.setEnabled(true);
                 } else {
@@ -1456,6 +1516,7 @@ public class D2FileManager extends JFrame {
                     dropTo.setEnabled(false);
                     dropChooser.setEnabled(false);
                     dropAll.setEnabled(false);
+                    dropAllDupe.setEnabled(false);
                     flavieSingle.setEnabled(false);
                     dumpBut.setEnabled(false);
                 }
