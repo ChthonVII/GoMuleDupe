@@ -167,6 +167,9 @@ public class D2Stash extends D2ItemListAdapter {
                 if (response == JOptionPane.YES_OPTION) {
                     readItems(lNumItems);
                 }
+                else {
+                    throw new Exception("User declined to open old stash.");
+                }
             } else {
                 throw new Exception("Stash Version Incorrect!");
             }

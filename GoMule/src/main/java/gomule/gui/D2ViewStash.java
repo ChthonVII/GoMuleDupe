@@ -380,7 +380,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             }
             iTable.setModel(iItemModel);
         } catch (Exception pEx) {
-            displayErrorDialog(pEx);
+            if (pEx.getMessage() != "User declined to open old stash."){
+                displayErrorDialog(pEx);
+            }
             disconnect(pEx);
         }
 
