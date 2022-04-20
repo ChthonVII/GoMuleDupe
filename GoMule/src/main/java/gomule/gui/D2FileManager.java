@@ -114,6 +114,8 @@ public class D2FileManager extends JFrame {
     private JButton dumpBut;
 
     private JButton flavieSingle;
+    
+    private JButton iChatGem;
 
     private D2FileManager() {
         D2TxtFile.constructTxtFiles("d2111");
@@ -878,10 +880,39 @@ public class D2FileManager extends JFrame {
         charControl.addToPanel(dumpBut, 0, 0, 1, Constraint.HORIZONTAL);
         charControl.addToPanel(flavieSingle, 0, 1, 1, Constraint.HORIZONTAL);
 
+        RandallPanel ChatGemControl = new RandallPanel();
+        //ChatGemControl.setBorder(BorderFactory.createLineBorder(Color.gray));
+        ChatGemControl.setPreferredSize(new Dimension(180, 36));
+        ChatGemControl.setSize(new Dimension(180, 36));
+        ChatGemControl.setMaximumSize(new Dimension(180, 36));
+        ChatGemControl.setMinimumSize(new Dimension(180, 36));
+        
+        iChatGem = new JButton("Chat Gem");
+        iChatGem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent pEvent) {
+                int random_int = (int)Math.floor(Math.random()*500);
+                if (random_int == 0){
+                    System.out.println("Moo!");
+                    JOptionPane.showMessageDialog(null, "Moo!");
+                }
+                else if (random_int < 5){
+                    System.out.println("Perfect Gem Activated!");
+                    JOptionPane.showMessageDialog(null, "Perfect Gem Activated!");
+                }
+                else {
+                    System.out.println("Gem Activated.");
+                }
+            }
+        });
+        ChatGemControl.addToPanel(iChatGem, 0, 0, 1, Constraint.HORIZONTAL);
+        
+iMenuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
+        
         iRightPane.add(iClipboard);
         iRightPane.add(itemControl);
         iRightPane.add(charControl);
         iRightPane.add(Box.createVerticalGlue());
+        iRightPane.add(ChatGemControl);
     }
 
     private void moveToClipboard(D2Item remItem, D2ItemList iList) {

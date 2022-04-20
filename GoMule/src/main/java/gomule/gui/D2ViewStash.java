@@ -75,7 +75,6 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
     private JButton iDropDupe;
     private JButton iDropAll;
     private JButton iDropAllDupe;
-    private JButton iChatGem;
     
     // item types
     private JCheckBox iTypeUnique;
@@ -511,25 +510,6 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
             }
         });
         lButtonPanel.addToPanel(iDropAllDupe, 2, 1, 1, Constraint.HORIZONTAL);
-        
-        iChatGem = new JButton("Chat Gem");
-        iChatGem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent pEvent) {
-                int random_int = (int)Math.floor(Math.random()*500);
-                if (random_int == 0){
-                    System.out.println("Moo!");
-                    JOptionPane.showMessageDialog(null, "Moo!");
-                }
-                else if (random_int < 5){
-                    System.out.println("Perfect Gem Activated!");
-                    JOptionPane.showMessageDialog(null, "Perfect Gem Activated!");
-                }
-                else {
-                    System.out.println("Gem Activated.");
-                }
-            }
-        });
-        //lButtonPanel.addToPanel(iChatGem, 2, 1, 1, Constraint.HORIZONTAL);
         
         iDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
