@@ -154,7 +154,7 @@ public class D2Stash extends D2ItemListAdapter {
                 readItems(lNumItems);
             } else if (lVersionNr == 97) {
                 JDialog.setDefaultLookAndFeelDecorated(true);
-                int response = JOptionPane.showConfirmDialog(null, "This is a pre-2.4 stash file.\nIt is *probably* safe to open so long as it doesn't contain any personalized items.\nDo you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, "This is a pre-2.4 stash file.\nIt is *probably* safe to open so long as it doesn't contain any items that have been personalized by Anya.\nDo you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 /*
                 if (response == JOptionPane.NO_OPTION) {
                     System.out.println("No button clicked");
