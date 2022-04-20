@@ -554,7 +554,7 @@ public class D2FileManager extends JFrame {
             }
         });
         
-        pickAllDupe = new JButton("Dupe & Pick All");
+        pickAllDupe = new JButton("PADupe");
         pickAllDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()) > -1) {
@@ -629,7 +629,7 @@ public class D2FileManager extends JFrame {
             }
         });
         
-        dropAllDupe = new JButton("Dupe & Drop All");
+        dropAllDupe = new JButton("DADupe");
         dropAllDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()) > -1) {
