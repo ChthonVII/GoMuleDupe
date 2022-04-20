@@ -105,7 +105,7 @@ public class SharedStashPanel extends JPanel {
         sharedStash.setModified(true);
         return stashPane.getItems();
     }
-
+        
     public java.util.List<D2Item> tryToAddItems(java.util.List<D2Item> items) {
         D2SharedStash sharedStash = getSharedStash();
         if (sharedStash == null) return emptyList();

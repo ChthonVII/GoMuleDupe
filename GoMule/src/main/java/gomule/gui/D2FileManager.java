@@ -106,6 +106,7 @@ public class D2FileManager extends JFrame {
     private JComboBox dropChooser;
 
     private JButton pickAll;
+    private JButton pickAllDupe;
 
     private JButton dumpBut;
 
@@ -551,6 +552,48 @@ public class D2FileManager extends JFrame {
                 }
             }
         });
+        
+        pickAllDupe = new JButton("Dupe & Pick All");
+        pickAllDupe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()) > -1) {
+                    D2ItemContainer d2ItemContainer = (D2ItemContainer) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()));
+                    D2ItemList iList = d2ItemContainer.getItemLists();
+                    iList.ignoreItemListEvents();
+                    try {
+
+                        if (iList.getFilename().endsWith(".d2s") && getProject().getIgnoreItems()) {
+
+                            for (int x = 0; x < iList.getNrItems(); x++) {
+
+                                if (((D2Item) iList.getItemList().get(x)).isMoveable()) {
+                                    copyToClipboard(((D2Item) iList.getItemList().get(x)), iList);
+                                }
+                            }
+
+                        } else if (d2ItemContainer instanceof D2ViewSharedStash) {
+                            D2ViewSharedStash viewSharedStash = ((D2ViewSharedStash) d2ItemContainer);
+                            D2SharedStash.D2SharedStashPane stashPane = viewSharedStash.getSharedStashPanel().getSelectedStashPane();
+                            stashPane.getItems().forEach(item -> {
+                                D2Item dupe = new D2Item(item);
+                                boolean trashbool = dupe.randomizeFingerprint();
+                                D2ViewClipboard.addItem(dupe);
+                            });
+                            
+                        } else {
+
+                            for (int x = 0; x < iList.getNrItems(); x++) {
+                                copyToClipboard(((D2Item) iList.getItemList().get(x)), iList);
+                            }
+
+                        }
+                    } finally {
+                        iList.listenItemListEvents();
+                        iList.fireD2ItemListEvent();
+                    }
+                }
+            }
+        });
 
         dropAll = new JButton("Drop All");
         dropAll.addActionListener(new ActionListener() {
@@ -652,13 +695,19 @@ public class D2FileManager extends JFrame {
         itemControl.addToPanel(pickAll, 0, 0, 1, Constraint.HORIZONTAL);
         itemControl.addToPanel(dropAll, 1, 0, 1, Constraint.HORIZONTAL);
 
-        itemControl.addToPanel(pickFrom, 0, 1, 2, Constraint.HORIZONTAL);
+        itemControl.addToPanel(pickAllDupe, 0, 1, 1, Constraint.HORIZONTAL);
+        
+        //itemControl.addToPanel(pickFrom, 0, 1, 2, Constraint.HORIZONTAL);
+        itemControl.addToPanel(pickFrom, 0, 2, 2, Constraint.HORIZONTAL);
 
-        itemControl.addToPanel(pickChooser, 0, 2, 2, Constraint.HORIZONTAL);
+        //itemControl.addToPanel(pickChooser, 0, 2, 2, Constraint.HORIZONTAL);
+        itemControl.addToPanel(pickChooser, 0, 3, 2, Constraint.HORIZONTAL);
 
-        itemControl.addToPanel(dropTo, 0, 3, 2, Constraint.HORIZONTAL);
+        //itemControl.addToPanel(dropTo, 0, 3, 2, Constraint.HORIZONTAL);
+        itemControl.addToPanel(dropTo, 0, 4, 2, Constraint.HORIZONTAL);
 
-        itemControl.addToPanel(dropChooser, 0, 4, 2, Constraint.HORIZONTAL);
+        //itemControl.addToPanel(dropChooser, 0, 4, 2, Constraint.HORIZONTAL);
+        itemControl.addToPanel(dropChooser, 0, 5, 2, Constraint.HORIZONTAL);
 
 
         RandallPanel charControl = new RandallPanel();
@@ -717,6 +766,12 @@ public class D2FileManager extends JFrame {
             ((D2ViewChar) iOpenWindows.get(iOpenWindows.indexOf(iDesktopPane.getSelectedFrame()))).paintCharStats();
         }
         D2ViewClipboard.addItem(remItem);
+    }
+    
+    private void copyToClipboard(D2Item remItem, D2ItemList iList) {
+        D2Item dupe = new D2Item(remItem);
+        boolean trashbool = dupe.randomizeFingerprint();
+        D2ViewClipboard.addItem(dupe);
     }
 
     private void createMenubar() {
@@ -1391,6 +1446,7 @@ public class D2FileManager extends JFrame {
                     dropTo.setEnabled(false);
                     dropChooser.setEnabled(false);
                     pickAll.setEnabled(true);
+                    pickAllDupe.setEnabled(true);
                     dropAll.setEnabled(true);
                     flavieSingle.setEnabled(true);
                     dumpBut.setEnabled(true);
