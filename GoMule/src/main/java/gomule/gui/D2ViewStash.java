@@ -72,8 +72,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
     private JButton iPickup;
     private JButton iPickupDupe;
     private JButton iDropOne;
-    private JButton iDropAll;
     private JButton iDropDupe;
+    private JButton iDropAll;
+    private JButton iDropAllDupe;
     private JButton iChatGem;
     
     // item types
@@ -363,20 +364,24 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 iPickup.setEnabled(true);
                 iPickupDupe.setEnabled(true);
                 iDropOne.setEnabled(true);
-                iDropAll.setEnabled(true);
                 iDropDupe.setEnabled(true);
+                iDropAll.setEnabled(true);
+                iDropAllDupe.setEnabled(true);
                 iDropOne.setVisible(true);
-                iDropAll.setVisible(true);
                 iDropDupe.setVisible(true);
+                iDropAll.setVisible(true);
+                iDropAllDupe.setVisible(true);
             } else {
                 iPickup.setEnabled(true);
                 iPickupDupe.setEnabled(true);
                 iDropOne.setEnabled(false);
-                iDropAll.setEnabled(false);
                 iDropDupe.setEnabled(false);
+                iDropAll.setEnabled(false);
+                iDropAllDupe.setEnabled(false);
                 iDropOne.setVisible(false);
-                iDropAll.setVisible(false);
                 iDropDupe.setVisible(false);
+                iDropAll.setVisible(false);
+                iDropAllDupe.setVisible(false);
             }
             iTable.setModel(iItemModel);
         } catch (Exception pEx) {
@@ -405,8 +410,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         iPickup.setEnabled(false);
         iPickupDupe.setEnabled(false);
         iDropOne.setEnabled(false);
-        iDropAll.setEnabled(false);
         iDropDupe.setEnabled(false);
+        iDropAll.setEnabled(false);
+        iDropAllDupe.setEnabled(false);
         itemListChanged();
     }
 
@@ -451,6 +457,19 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         });
         lButtonPanel.addToPanel(iDropOne, 1, 0, 1, Constraint.HORIZONTAL);
 
+        iDropDupe = new JButton("Drop Dupe");
+        iDropDupe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent pEvent) {
+                D2Item pItem = D2ViewClipboard.removeItem();
+                D2Item original = new D2Item(pItem);
+                D2ViewClipboard.addItem(original); // put it right back
+                boolean trashbool = pItem.randomizeFingerprint();
+                iStash.addItem(pItem);
+                selectItem(pItem);
+            }
+        });
+        lButtonPanel.addToPanel(iDropDupe, 1, 1, 1, Constraint.HORIZONTAL);
+        
         iDropAll = new JButton("Drop All");
         iDropAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
@@ -471,18 +490,36 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         });
         lButtonPanel.addToPanel(iDropAll, 2, 0, 1, Constraint.HORIZONTAL);
 
-        iDropDupe = new JButton("Drop Dupe");
-        iDropDupe.addActionListener(new ActionListener() {
+        iDropAllDupe = new JButton("Drop All Dupe");
+        iDropAllDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
-                D2Item pItem = D2ViewClipboard.removeItem();
-                D2Item original = new D2Item(pItem);
-                D2ViewClipboard.addItem(original); // put it right back
-                boolean trashbool = pItem.randomizeFingerprint();
-                iStash.addItem(pItem);
-                selectItem(pItem);
+                
+                
+                D2Item lastItemAdded = null;
+                try {
+                    iStash.ignoreItemListEvents();
+                    
+                    List<D2Item> items = D2ViewClipboard.getItemList();
+                    for (D2Item item : items) {
+                        D2Item dupe = new D2Item(item);
+                        lastItemAdded = dupe;
+                        boolean trashbool = dupe.randomizeFingerprint();
+                        iStash.addItem(dupe);
+                    }
+                    
+                    //ArrayList lItemList = D2ViewClipboard.removeAllItems();
+                    //while (lItemList.size() > 0) {
+                    //    lastItemAdded = (D2Item) lItemList.remove(0);
+                     //   iStash.addItem(lastItemAdded);
+                    //}
+                } finally {
+                    iStash.listenItemListEvents();
+                }
+                itemListChanged();
+                if (lastItemAdded != null) selectItem(lastItemAdded);
             }
         });
-        lButtonPanel.addToPanel(iDropDupe, 1, 1, 1, Constraint.HORIZONTAL);
+        lButtonPanel.addToPanel(iDropAllDupe, 2, 1, 1, Constraint.HORIZONTAL);
         
         iChatGem = new JButton("Chat Gem");
         iChatGem.addActionListener(new ActionListener() {
@@ -501,7 +538,7 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 }
             }
         });
-        lButtonPanel.addToPanel(iChatGem, 2, 1, 1, Constraint.HORIZONTAL);
+        //lButtonPanel.addToPanel(iChatGem, 2, 1, 1, Constraint.HORIZONTAL);
         
         iDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
