@@ -493,12 +493,9 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
         iDropAllDupe = new JButton("Drop All Dupe");
         iDropAllDupe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pEvent) {
-                
-                
                 D2Item lastItemAdded = null;
                 try {
                     iStash.ignoreItemListEvents();
-                    
                     List<D2Item> items = D2ViewClipboard.getItemList();
                     for (D2Item item : items) {
                         D2Item dupe = new D2Item(item);
@@ -506,12 +503,6 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                         boolean trashbool = dupe.randomizeFingerprint();
                         iStash.addItem(dupe);
                     }
-                    
-                    //ArrayList lItemList = D2ViewClipboard.removeAllItems();
-                    //while (lItemList.size() > 0) {
-                    //    lastItemAdded = (D2Item) lItemList.remove(0);
-                     //   iStash.addItem(lastItemAdded);
-                    //}
                 } finally {
                     iStash.listenItemListEvents();
                 }
