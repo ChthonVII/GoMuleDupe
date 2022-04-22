@@ -906,8 +906,6 @@ public class D2FileManager extends JFrame {
         });
         ChatGemControl.addToPanel(iChatGem, 0, 0, 1, Constraint.HORIZONTAL);
         
-iMenuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
-        
         iRightPane.add(iClipboard);
         iRightPane.add(itemControl);
         iRightPane.add(charControl);
