@@ -108,7 +108,7 @@ public class D2CharacterTest {
             "Ceremonial Javelin\n" +
             "Throw Damage: 74 - 197\n" +
             "One Hand Damage: 74 - 145\n" +
-            "Quantity: 142\n" +
+            "Quantity: 143\n" +
             "Required Level: 42\n" +
             "Required Strength: 25\n" +
             "Required Dexterity: 109\n" +
@@ -734,7 +734,7 @@ public class D2CharacterTest {
             "Matriarchal Javelin\n" +
             "Throw Damage: 169 - 324\n" +
             "One Hand Damage: 149 - 274\n" +
-            "Quantity: 142\n" +
+            "Quantity: 143\n" +
             "Required Level: 55\n" +
             "Required Strength: 97\n" +
             "Required Dexterity: 141\n" +
