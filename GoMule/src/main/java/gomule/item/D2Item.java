@@ -675,6 +675,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             break;
 
             case 2: {
+                if (iItemName.contains("Token of Absolution")) iItemName = "Token of Absolution";
                 readTypes(pFile);
                 break;
             }
