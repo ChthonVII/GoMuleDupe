@@ -1237,26 +1237,30 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 public int compare(Object pObj1, Object pObj2) {
                     D2Item lItem1 = (D2Item) pObj1;
                     D2Item lItem2 = (D2Item) pObj2;
+                    try {
+                        for (int i = 0; i < iSortList.size(); i++) {
+                            Object lSort = iSortList.get(i);
 
-                    for (int i = 0; i < iSortList.size(); i++) {
-                        Object lSort = iSortList.get(i);
-
-                        if (lSort == HEADER[0]) {
-                            return lItem1.getName().compareTo(lItem2.getName());
-                        } else if (lSort == HEADER[1]) {
-                            return lItem1.getReqLvl() - lItem2.getReqLvl();
-                        } else if (lSort == HEADER[2]) {
-                            return lItem1.getReqStr() - lItem2.getReqStr();
-                        } else if (lSort == HEADER[3]) {
-                            return lItem1.getReqDex() - lItem2.getReqDex();
-                        } else if (lSort == HEADER[4]) {
-                            String lFileName1 = ((D2ItemListAll) iStash).getFilename(lItem1);
-                            String lFileName2 = ((D2ItemListAll) iStash).getFilename(lItem2);
-                            return lFileName1.compareTo(lFileName2);
+                            if (lSort == HEADER[0]) {
+                                return lItem1.getName().compareTo(lItem2.getName());
+                            } else if (lSort == HEADER[1]) {
+                                return lItem1.getReqLvl() - lItem2.getReqLvl();
+                            } else if (lSort == HEADER[2]) {
+                                return lItem1.getReqStr() - lItem2.getReqStr();
+                            } else if (lSort == HEADER[3]) {
+                                return lItem1.getReqDex() - lItem2.getReqDex();
+                            } else if (lSort == HEADER[4]) {
+                                String lFileName1 = ((D2ItemListAll) iStash).getFilename(lItem1);
+                                String lFileName2 = ((D2ItemListAll) iStash).getFilename(lItem2);
+                                return lFileName1.compareTo(lFileName2);
+                            }
                         }
-                    }
 
-                    return 0;
+                        return 0;
+                    } catch (Exception e) {
+                        D2FileManager.displayTextDialog("Error", "Failed to open stash due to:\n" + lItem1.itemDump(false) + "\nor:\n" + lItem2.itemDump(false));
+                        throw e;
+                    }
                 }
             });
             fireTableChanged();
