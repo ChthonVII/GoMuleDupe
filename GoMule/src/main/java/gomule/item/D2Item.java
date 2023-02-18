@@ -422,7 +422,8 @@ public class D2Item implements Comparable, D2ItemInterface {
             D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES
                     .searchRuneWord(lList);
             if (lRuneWord != null) {
-                iItemName = D2TblFile.getString(lRuneWord.get("Name"));
+                String lookedUpName = D2TblFile.getString(lRuneWord.get("Name"));
+                iItemName = lookedUpName == null ? lRuneWord.get("*Rune Name") : lookedUpName;
             }
         }
 

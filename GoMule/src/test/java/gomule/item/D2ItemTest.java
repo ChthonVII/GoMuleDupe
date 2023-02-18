@@ -380,6 +380,54 @@ public class D2ItemTest {
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
+    @Test
+    public void runeword_2_6() throws Exception {
+        String expected = "Bulwark\n" +
+                "Mask\n" +
+                "ShaelIoSol\n" +
+                "Defense: 38\n" +
+                "Durability: 17 of 20\n" +
+                "Required Level: 35\n" +
+                "Required Strength: 23\n" +
+                "Fingerprint: 0x4635278f\n" +
+                "Item Level: 85\n" +
+                "Version: Resurrected\n" +
+                "+20% Faster Hit Recovery\n" +
+                "4% Life stolen per hit\n" +
+                "+76% Enhanced Defense\n" +
+                "+10 to Vitality\n" +
+                "Increase Maximum Life 5%\n" +
+                "Replenish Life +30\n" +
+                "Damage Reduced by 11%\n" +
+                "Damage Reduced by 7\n" +
+                "3 Sockets (3 used)\n" +
+                "Socketed: Shael Rune\n" +
+                "Socketed: Io Rune\n" +
+                "Socketed: Sol Rune\n" +
+                "\n" +
+                "Shael Rune\n" +
+                "Required Level: 29\n" +
+                "Version: Resurrected\n" +
+                "Weapons: +20% Increased Attack Speed\n" +
+                "Armor: +20% Faster Hit Recovery\n" +
+                "Shields: +20% Faster Block Rate\n" +
+                "\n" +
+                "Io Rune\n" +
+                "Required Level: 35\n" +
+                "Version: Resurrected\n" +
+                "Weapons: +10 to Vitality\n" +
+                "Armor: +10 to Vitality\n" +
+                "Shields: +10 to Vitality\n" +
+                "\n" +
+                "Sol Rune\n" +
+                "Required Level: 27\n" +
+                "Version: Resurrected\n" +
+                "Weapons: Armor: Damage Reduced by 7\n" +
+                "Shields: Damage Reduced by 7\n";
+        byte[] bytes = decode("10 08 80 04 05 00 D4 92 D4 1E 4F 6A 8C AA 02 BA 1A 10 50 44 98 FF 10 98 90 98 C6 83 A0 84 67 F2 FC 07 10 00 A0 00 35 00 E0 7C B6 01 10 00 A0 00 35 04 E0 7C F6 01 10 00 A0 00 35 08 E0 7C 98 00 10");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
     private byte[] decode(String s) {
         return BaseEncoding.base16().decode(s.replaceAll(" ", ""));
     }
