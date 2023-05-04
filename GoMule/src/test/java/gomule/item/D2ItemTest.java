@@ -442,6 +442,15 @@ public class D2ItemTest {
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
+    @Test
+    public void cairn_stones_partial_read() throws Exception {
+        D2Item d2Item = loadD2Item(decode("10 00 A0 00 05 C8 54 A5 31 00"));
+        String expected = "Key to the Cairn Stones\n" +
+                "Version: Resurrected\n";
+        runItemDumpComparison(expected, d2Item);
+        assertEquals(10, d2Item.getItemLength());
+    }
+
     private byte[] decode(String s) {
         return BaseEncoding.base16().decode(s.replaceAll(" ", ""));
     }
