@@ -1403,6 +1403,7 @@ public class D2Character extends D2ItemListAdapter {
 
             try {
                 int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
+                if (page == 0) continue;
                 skillTrees[page - 1] = skillTrees[page - 1] + D2TblFile.getString(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
             } catch (NumberFormatException e) {
