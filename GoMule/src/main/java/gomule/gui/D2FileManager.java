@@ -53,6 +53,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.Integer.parseInt;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 
 /**
@@ -69,6 +70,8 @@ public class D2FileManager extends JFrame {
     private static final String CURRENT_VERSION = "R0.44: Resurrected";
     private final static D2FileManager iCurrent = new D2FileManager();
     private final D2SharedStashReader sharedStashReader;
+    private final JSplitPane lSplit;
+    private final JSplitPane rSplit;
     private HashMap iItemLists = new HashMap();
     private ArrayList iOpenWindows;
     private JMenuBar iMenuBar;
@@ -126,16 +129,21 @@ public class D2FileManager extends JFrame {
         createLeftPane();
         createRightPane();
 
-        JSplitPane lSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, iLeftPane, iDesktopPane);
-        JSplitPane rSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, lSplit, iRightPane);
+        lSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, iLeftPane, iDesktopPane);
+        rSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, lSplit, iRightPane);
 
-        lSplit.setDividerLocation(200);
-        rSplit.setDividerLocation(1024 - 210);
+        setExtendedState(parseInt(iProperties.getProperty("win-state", "0")));
+        lSplit.setDividerLocation(parseInt(iProperties.getProperty("win-ldiv-loc", "200")));
+        rSplit.setDividerLocation(parseInt(iProperties.getProperty("win-rdiv-loc", "814")));
         rSplit.setResizeWeight(1.0);
         iContentPane.add(rSplit, BorderLayout.CENTER);
-
         setContentPane(iContentPane);
-        setSize(1024, 768);
+        setBounds(new Rectangle(
+                parseInt(iProperties.getProperty("win-x", "0")),
+                parseInt(iProperties.getProperty("win-y", "0")),
+                parseInt(iProperties.getProperty("win-width", "1024")),
+                parseInt(iProperties.getProperty("win-height", "768"))
+        ));
         setTitle(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.getGlassPane().setVisible(false);
@@ -1067,6 +1075,16 @@ public class D2FileManager extends JFrame {
      */
     public void closeListener() {
         iProperties.setProperty("current-project", iProject.getProjectName());
+        Rectangle bounds = getBounds();
+        iProperties.setProperty("win-state", String.valueOf(getExtendedState()));
+        iProperties.setProperty("win-ldiv-loc", String.valueOf(lSplit.getDividerLocation()));
+        iProperties.setProperty("win-rdiv-loc", String.valueOf(rSplit.getDividerLocation()));
+        if (getExtendedState() == NORMAL) {
+            iProperties.setProperty("win-x", String.valueOf(bounds.x));
+            iProperties.setProperty("win-y", String.valueOf(bounds.y));
+            iProperties.setProperty("win-height", String.valueOf(bounds.height));
+            iProperties.setProperty("win-width", String.valueOf(bounds.width));
+        }
         FileManagerProperties.saveFileManagerProperties(iProperties);
         closeWindows();
         System.exit(0);
