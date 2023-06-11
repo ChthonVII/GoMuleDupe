@@ -22,6 +22,7 @@
 package gomule.d2s;
 
 import com.google.common.collect.Iterables;
+import gomule.D2Files;
 import gomule.gui.D2ItemListAdapter;
 import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
@@ -29,7 +30,10 @@ import gomule.item.D2Prop;
 import gomule.util.D2Backup;
 import gomule.util.D2BitReader;
 import gomule.util.D2Project;
-import randall.d2files.*;
+import randall.d2files.D2FileReader;
+import randall.d2files.D2FileWriter;
+import randall.d2files.D2TxtFile;
+import randall.d2files.D2TxtFileItemProperties;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -603,7 +607,7 @@ public class D2Character extends D2ItemListAdapter {
         } else {
             nameStr = nameStr + curNum;
         }
-        cMercInfo.put("name", D2TblFile.getString(nameStr));
+        cMercInfo.put("name", D2Files.getInstance().getTranslations().getTranslation(nameStr));
     }
 
     private void dealWithSkills() {
@@ -1404,7 +1408,16 @@ public class D2Character extends D2ItemListAdapter {
             try {
                 int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
                 if (page == 0) continue;
-                skillTrees[page - 1] = skillTrees[page - 1] + D2TblFile.getString(D2TxtFile.SKILL_DESC.searchColumns("skilldesc", ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
+                skillTrees[page - 1] = skillTrees[page - 1]
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(D2TxtFile.SKILL_DESC
+                                        .searchColumns(
+                                                "skilldesc",
+                                                ((D2TxtFileItemProperties) skillArr.get(x)).get("skilldesc"))
+                                        .get("str name"))
+                        + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/"
+                        + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
             } catch (NumberFormatException e) {
                 //ignore

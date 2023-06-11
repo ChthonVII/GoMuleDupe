@@ -21,9 +21,9 @@
 
 package gomule.item;
 
+import gomule.D2Files;
 import gomule.util.D2BitReader;
 import gomule.util.D2ItemException;
-import randall.d2files.D2TblFile;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
 import randall.flavie.D2ItemInterface;
@@ -308,7 +308,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             }
         }
 
-        String lItemName = D2TblFile.getString(item_type);
+        String lItemName = D2Files.getInstance().getTranslations().getTranslation(item_type);
         if (lItemName != null) {
             iItemName = lItemName;
             iBaseItemName = iItemName;
@@ -422,7 +422,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES
                     .searchRuneWord(lList);
             if (lRuneWord != null) {
-                String lookedUpName = D2TblFile.getString(lRuneWord.get("Name"));
+                String lookedUpName = D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"));
                 iItemName = lookedUpName == null ? lRuneWord.get("*Rune Name") : lookedUpName;
             }
         }
@@ -548,7 +548,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                         .getRow(magic_prefix);
                 String lPreName = lPrefix.get("Name");
                 if (lPreName != null && !lPreName.equals("")) {
-                    iItemName = D2TblFile.getString(lPreName) + " " + iItemName;
+                    iItemName = D2Files.getInstance().getTranslations().getTranslation(lPreName) + " " + iItemName;
                     int lPreReq = getReq(lPrefix.get("levelreq"));
                     if (lPreReq > iReqLvl) {
                         iReqLvl = lPreReq;
@@ -559,7 +559,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                         .getRow(magic_suffix);
                 String lSufName = lSuffix.get("Name");
                 if (lSufName != null && !lSufName.equals("")) {
-                    iItemName = iItemName + " " + D2TblFile.getString(lSufName);
+                    iItemName = iItemName + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(lSufName);
                     int lSufReq = getReq(lSuffix.get("levelreq"));
                     if (lSufReq > iReqLvl) {
                         iReqLvl = lSufReq;
@@ -580,7 +581,7 @@ public class D2Item implements Comparable, D2ItemInterface {
 
                 D2TxtFileItemProperties lSet = D2TxtFile.SETITEMS.searchColumns("*ID", String.valueOf(set_id));
                 String nameFromSetFile = lSet.get("index");
-                String translatedName = D2TblFile.getString(nameFromSetFile);
+                String translatedName = D2Files.getInstance().getTranslations().getTranslation(nameFromSetFile);
                 iItemName = translatedName == null ? nameFromSetFile : translatedName;
                 iSetName = lSet.get("set");
 
@@ -607,7 +608,7 @@ public class D2Item implements Comparable, D2ItemInterface {
                 D2TxtFileItemProperties lUnique = D2TxtFile.UNIQUES
                         .searchColumns("*ID", String.valueOf(unique_id));
                 if (lUnique == null) break;
-                String lNewName = D2TblFile.getString(lUnique.get("index"));
+                String lNewName = D2Files.getInstance().getTranslations().getTranslation(lUnique.get("index"));
                 if (lNewName != null) {
                     iItemName = lNewName;
                 }
@@ -643,8 +644,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                     .getRow(rare_name_1 - 156);
             D2TxtFileItemProperties lRareName2 = D2TxtFile.RARESUFFIX
                     .getRow(rare_name_2 - 1);
-            iItemName = D2TblFile.getString(lRareName1.get("name")) + " "
-                    + D2TblFile.getString(lRareName2.get("name"));
+                iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
+                        + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
 
             rare_prefixes = new short[3];
             rare_suffixes = new short[3];
@@ -2421,8 +2422,12 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (rare_prefixes[x] > 1) {
 
                 retStr = retStr
-                        + D2TblFile.getString(D2TxtFile.PREFIX.getRow(
-                        rare_prefixes[x]).get("Name")) + " ";
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(D2TxtFile.PREFIX
+                                        .getRow(rare_prefixes[x])
+                                        .get("Name"))
+                        + " ";
             }
         }
 
@@ -2433,8 +2438,12 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (rare_suffixes[x] > 1) {
 
                 retStr = retStr
-                        + D2TblFile.getString(D2TxtFile.SUFFIX.getRow(
-                        rare_suffixes[x]).get("Name")) + " ";
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(D2TxtFile.SUFFIX
+                                        .getRow(rare_suffixes[x])
+                                        .get("Name"))
+                        + " ";
             }
         }
 

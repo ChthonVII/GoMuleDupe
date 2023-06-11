@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation 'com.google.guava:guava:31.0-jre'
     implementation 'com.formdev:flatlaf:1.6'
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
     testImplementation "org.mockito:mockito-core:3.+"
     testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
 }

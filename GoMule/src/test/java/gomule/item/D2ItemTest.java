@@ -3,7 +3,6 @@ package gomule.item;
 import com.google.common.io.BaseEncoding;
 import gomule.util.D2BitReader;
 import org.junit.jupiter.api.Test;
-import randall.d2files.D2TblFile;
 import randall.d2files.D2TxtFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -317,65 +316,64 @@ public class D2ItemTest {
 
     @Test
     public void coh() throws Exception {
-        String expected = "Chains of Honor\n" +
-                "Archon Plate\n" +
-                "DolUmBerIst\n" +
-                "Defense: 882\n" +
-                "Durability: 15 of 60\n" +
-                "Required Level: 63\n" +
-                "Required Strength: 103\n" +
-                "Fingerprint: 0xed9dd144\n" +
-                "Item Level: 85\n" +
-                "Version: Resurrected\n" +
-                "+2 to All Skills\n" +
-                "+200% Damage to Demons\n" +
-                "+100% Damage to Undead\n" +
-                "8% Life stolen per hit\n" +
-                "+70% Enhanced Defense\n" +
-                "+20 to Strength\n" +
-                "Replenish Life +7\n" +
-                "All Resistances +65\n" +
-                "Damage Reduced by 8%\n" +
-                "25% Better Chance of Getting Magic Items\n" +
-                "4 Sockets (4 used)\n" +
-                "Socketed: Dol Rune\n" +
-                "Socketed: Um Rune\n" +
-                "Socketed: Ber Rune\n" +
-                "Socketed: Ist Rune\n" +
-                "\n" +
-                "Dol Rune\n" +
-                "Required Level: 31\n" +
-                "Version: Resurrected\n" +
-                "Weapons: Hit Causes Monster to Flee 25%\n" +
-                "Armor: Replenish Life +7\n" +
-                "Shields: Replenish Life +7\n" +
-                "\n" +
-                "Um Rune\n" +
-                "Required Level: 47\n" +
-                "Version: Resurrected\n" +
-                "Weapons: 25% Chance of Open Wounds\n" +
-                "Armor: Cold Resist +15%\n" +
-                "Lightning Resist +15%\n" +
-                "Fire Resist +15%\n" +
-                "Poison Resist +15%\n" +
-                "Shields: Cold Resist +22%\n" +
-                "Lightning Resist +22%\n" +
-                "Fire Resist +22%\n" +
-                "Poison Resist +22%\n" +
-                "\n" +
-                "Ber Rune\n" +
-                "Required Level: 63\n" +
-                "Version: Resurrected\n" +
-                "Weapons: 20% Chance of Crushing Blow\n" +
-                "Armor: Damage Reduced by 8%\n" +
-                "Shields: Damage Reduced by 8%\n" +
-                "\n" +
-                "Ist Rune\n" +
-                "Required Level: 51\n" +
-                "Version: Resurrected\n" +
-                "Weapons: 30% Better Chance of Getting Magic Items\n" +
-                "Armor: 25% Better Chance of Getting Magic Items\n" +
-                "Shields: 25% Better Chance of Getting Magic Items\n";
+        String expected = "Chains of Honor\n" + "Archon Plate\n"
+                + "DolUmBerIst\n"
+                + "Defense: 882\n"
+                + "Durability: 15 of 60\n"
+                + "Required Level: 63\n"
+                + "Required Strength: 103\n"
+                + "Fingerprint: 0xed9dd144\n"
+                + "Item Level: 85\n"
+                + "Version: Resurrected\n"
+                + "+2 to All Skills\n"
+                + "+200% Damage to Demons\n"
+                + "+100% Damage to Undead\n"
+                + "8% Life stolen per hit\n"
+                + "+70% Enhanced Defense\n"
+                + "+20 to Strength\n"
+                + "Replenish Life +7\n"
+                + "All Resistances +65\n"
+                + "Damage Reduced by 8%\n"
+                + "25% Better Chance of Getting Magic Items\n"
+                + "4 Sockets (4 used)\n"
+                + "Socketed: Dol Rune\n"
+                + "Socketed: Um Rune\n"
+                + "Socketed: Ber Rune\n"
+                + "Socketed: Ist Rune\n"
+                + "\n"
+                + "Dol Rune\n"
+                + "Required Level: 31\n"
+                + "Version: Resurrected\n"
+                + "Weapons: Hit Causes Monster to Flee +25%\n"
+                + "Armor: Replenish Life +7\n"
+                + "Shields: Replenish Life +7\n"
+                + "\n"
+                + "Um Rune\n"
+                + "Required Level: 47\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 25% Chance of Open Wounds\n"
+                + "Armor: Cold Resist +15%\n"
+                + "Lightning Resist +15%\n"
+                + "Fire Resist +15%\n"
+                + "Poison Resist +15%\n"
+                + "Shields: Cold Resist +22%\n"
+                + "Lightning Resist +22%\n"
+                + "Fire Resist +22%\n"
+                + "Poison Resist +22%\n"
+                + "\n"
+                + "Ber Rune\n"
+                + "Required Level: 63\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 20% Chance of Crushing Blow\n"
+                + "Armor: Damage Reduced by 8%\n"
+                + "Shields: Damage Reduced by 8%\n"
+                + "\n"
+                + "Ist Rune\n"
+                + "Required Level: 51\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 30% Better Chance of Getting Magic Items\n"
+                + "Armor: 25% Better Chance of Getting Magic Items\n"
+                + "Shields: 25% Better Chance of Getting Magic Items\n";
         byte[] bytes = {16, 72, -128, 12, -51, 12, 0, -102, 25, -119, -94, 59, -37, -85, 2, 10, -108, 8, -15, 60, -96, -1, 0, 104, 32, 24, 57, -95, 47, -123, -66, 21, -6, 90, -24, -29, -127, -56, -61, 77, 15, -98, 63, -6, 15, 16, 0, -96, 8, 53, 0, -32, 124, -66, 2, 16, 0, -96, 8, 51, 4, -32, 48, 76, 0, 16, 0, -96, 8, 53, 8, -32, 108, -65, 3, 16, 0, -96, 8, 53, 12, -32, 48, 95, 1};
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
@@ -430,14 +428,14 @@ public class D2ItemTest {
 
     @Test
     public void new_charm() throws Exception {
-        //TODO: This needs to be fixed
-        String expected = "Grand Charm\n" +
-                "Required Level: 75\n" +
-                "Fingerprint: 0x69f99b80\n" +
-                "Item Level: 99\n" +
-                "Version: Resurrected\n" +
-                "Monster Fire Immunity is Sundered\n" +
-                "Fire Resist +-86%\n";
+        // TODO: This needs to be fixed
+        String expected = "Flame Rift\n" + "Grand Charm\n"
+                + "Required Level: 75\n"
+                + "Fingerprint: 0x69f99b80\n"
+                + "Item Level: 99\n"
+                + "Version: Resurrected\n"
+                + "Monster Fire Immunity is Sundered\n"
+                + "Fire Resist +-86%\n";
         byte[] bytes = decode("10 00 80 00 05 0C 54 D8 6D 00 DC CC 4F 1B 5F 91 0C 27 E4 F4 62 E9 3F");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
@@ -461,7 +459,6 @@ public class D2ItemTest {
 
     private D2Item loadD2Item(byte[] bytes) throws Exception {
         D2TxtFile.constructTxtFiles("./d2111");
-        D2TblFile.readAllFiles("./d2111");
         return new D2Item("my-test-file", new D2BitReader(bytes), 10);
     }
 }
