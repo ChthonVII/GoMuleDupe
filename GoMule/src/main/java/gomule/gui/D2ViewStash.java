@@ -24,6 +24,7 @@ import gomule.d2s.D2Character;
 import gomule.d2x.D2Stash;
 import gomule.item.D2BodyLocations;
 import gomule.item.D2Item;
+import gomule.item.D2ItemRenderer;
 import gomule.item.D2WeaponTypes;
 import gomule.util.D2CellStringRenderer;
 import gomule.util.D2CellValue;
@@ -308,24 +309,26 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
                 }
             });
 
-            iTable.getSelectionModel().addListSelectionListener(
-                    new ListSelectionListener() {
-                        public void valueChanged(ListSelectionEvent e) {
-                            if (iTable.getSelectedRowCount() == 1) {
+            iTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                public void valueChanged(ListSelectionEvent e) {
+                    if (iTable.getSelectedRowCount() == 1) {
 
-                                String dispStr = iItemModel.getItem(iTable.getSelectedRow()).itemDumpHtml(true).replaceAll("<[/]*html>", "");
-                                if (!isStash()) {
-                                    iItemText.setText("<html><font size=3 face=Dialog><font color = white>Item From: " + (((D2ItemListAll) iStash).getFilename(iItemModel.getItem(iTable.getSelectedRow()))) + "</font><br><br>" + dispStr + "</font></html>");
-                                } else {
-                                    iItemText.setText("<html><font size=3 face=Dialog>" + dispStr + "</font></html>");
-
-                                }
-                                iItemText.setCaretPosition(0);
-                            } else {
-                                iItemText.setText("");
-                            }
+                        String dispStr = D2ItemRenderer.itemDumpHtml(iItemModel.getItem(iTable.getSelectedRow()), true)
+                                .replaceAll("<[/]*html>", "");
+                        if (!isStash()) {
+                            iItemText.setText("<html><font size=3 face=Dialog><font color = white>Item From: "
+                                    + (((D2ItemListAll) iStash)
+                                            .getFilename(iItemModel.getItem(iTable.getSelectedRow())))
+                                    + "</font><br><br>" + dispStr + "</font></html>");
+                        } else {
+                            iItemText.setText("<html><font size=3 face=Dialog>" + dispStr + "</font></html>");
                         }
-                    });
+                        iItemText.setCaretPosition(0);
+                    } else {
+                        iItemText.setText("");
+                    }
+                }
+            });
         }
         if (iTable.getRowCount() > 0) {
             iTable.setRowSelectionInterval(0, 0);
@@ -1258,7 +1261,10 @@ public class D2ViewStash extends JInternalFrame implements D2ItemContainer, D2It
 
                         return 0;
                     } catch (Exception e) {
-                        D2FileManager.displayTextDialog("Error", "Failed to open stash due to:\n" + lItem1.itemDump(false) + "\nor:\n" + lItem2.itemDump(false));
+                        D2FileManager.displayTextDialog(
+                                "Error",
+                                "Failed to open stash due to:\n" + D2ItemRenderer.itemDump(lItem1, false) + "\nor:\n"
+                                        + D2ItemRenderer.itemDump(lItem2, false));
                         throw e;
                     }
                 }
