@@ -428,14 +428,13 @@ public class D2ItemTest {
 
     @Test
     public void new_charm() throws Exception {
-        // TODO: This needs to be fixed
         String expected = "Flame Rift\n" + "Grand Charm\n"
                 + "Required Level: 75\n"
                 + "Fingerprint: 0x69f99b80\n"
                 + "Item Level: 99\n"
                 + "Version: Resurrected\n"
                 + "Monster Fire Immunity is Sundered\n"
-                + "Fire Resist +-86%\n";
+                + "Fire Resist -86%\n";
         byte[] bytes = decode("10 00 80 00 05 0C 54 D8 6D 00 DC CC 4F 1B 5F 91 0C 27 E4 F4 62 E9 3F");
         runItemDumpComparison(expected, loadD2Item(bytes));
     }

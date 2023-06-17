@@ -404,7 +404,12 @@ public class D2Prop {
                 }
                 D2TxtFileItemProperties o = matchingPropsRecords.get(0);
                 String tooltip = o.get("*Tooltip");
-                return tooltip.replace("#", String.valueOf(pVals[0]));
+                String value = tooltip.replace("#", String.valueOf(pVals[0]));
+                if (pVals[0] < 0) {
+                    return value.replace("+", "");
+                } else {
+                    return value;
+                }
 
             case (20):
                 if (dispLoc == 1) {
