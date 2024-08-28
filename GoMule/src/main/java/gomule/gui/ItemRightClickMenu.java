@@ -31,7 +31,8 @@ public class ItemRightClickMenu extends JPopupMenu {
             JScrollPane SP = new JScrollPane(report);
             report.setBackground(Color.black);
             report.setForeground(Color.white);
-            report.setText("<html><font size=3 face=Dialog>" + D2ItemRenderer.itemDumpHtml(item, true) + "</font></html>");
+            report.setText(
+                    "<html><font size=3 face=Dialog>" + D2ItemRenderer.itemDumpHtml(item, true) + "</font></html>");
             report.setCaretPosition(0);
             itemPanel.add(SP);
             Point mouseLocation = MouseInfo.getPointerInfo().getLocation();

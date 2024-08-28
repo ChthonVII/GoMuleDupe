@@ -21,7 +21,6 @@
 
 package gomule.item;
 
-
 import gomule.D2Files;
 import randall.d2files.D2TxtFile;
 import randall.d2files.D2TxtFileItemProperties;
@@ -142,7 +141,9 @@ public class D2Prop {
 
         D2TxtFileItemProperties itemStatCostRow = D2TxtFile.ITEM_STAT_COST.getRow(pNum);
         String descstrpos = itemStatCostRow.get("descstrpos");
-        String oString = isNullOrEmpty(descstrpos) ? null : D2Files.getInstance().getTranslations().getTranslation(descstrpos);
+        String oString = isNullOrEmpty(descstrpos)
+                ? null
+                : D2Files.getInstance().getTranslations().getTranslation(descstrpos);
         //FUNCTION 0 means that you should use the txt files to find the print function to use. Otherwise, it should be a case of looking for custom funcs
         if (funcN == 0) {
 
@@ -251,61 +252,69 @@ public class D2Prop {
                 }
 
             case (5):
-                if (dispLoc == 1) {
-                    return ((pVals[0] * 100) / 128) + "% " + oString;
-
-                } else if (dispLoc == 2) {
-                    return oString + " " + ((pVals[0] * 100) / 128) + "%";
-                } else {
-                    return oString;
-                }
+                return String.format(oString, ((pVals[0] * 100) / 128));
 
             case (6):
                 if (dispLoc == 1) {
-                    return "+" + pVals[0] + " " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
+                    return "+" + pVals[0] + " " + oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
 
                 } else if (dispLoc == 2) {
-                    return oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2")) + " +" + pVals[0];
+                    return oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"))
+                            + " +" + pVals[0];
                 } else {
                     return oString;
                 }
 
             case (7):
                 if (dispLoc == 1) {
-                    return pVals[0] + "% " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
+                    return pVals[0] + "% " + oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
 
                 } else if (dispLoc == 2) {
-                    return oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2")) + pVals[0] + "%";
+                    return oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"))
+                            + pVals[0] + "%";
                 } else {
                     return oString;
                 }
 
             case (8):
                 if (dispLoc == 1) {
-                    return "+" + pVals[0] + "% " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
+                    return "+" + pVals[0] + "% " + oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
 
                 } else if (dispLoc == 2) {
-                    return oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2")) + " +" + pVals[0] + "%";
+                    return oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"))
+                            + " +" + pVals[0] + "%";
                 } else {
                     return oString;
                 }
 
             case (9):
                 if (dispLoc == 1) {
-                    return pVals[0] + " " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
+                    return pVals[0] + " " + oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
 
                 } else if (dispLoc == 2) {
-                    return oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2")) + " " + pVals[0];
+                    return oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"))
+                            + " " + pVals[0];
                 } else {
                     return oString;
                 }
 
             case (10):
                 if (dispLoc == 1) {
-                    return (pVals[0] * 100) / 128 + "% " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
+                    return (pVals[0] * 100) / 128 + "% " + oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"));
 
                 } else if (dispLoc == 2) {
-                    return oString + " " + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2")) + (pVals[0] * 100) / 128 + "%";
+                    return oString + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(itemStatCostRow.get("descstr2"))
+                            + (pVals[0] * 100) / 128 + "%";
                 } else {
                     return oString;
                 }
@@ -352,7 +361,6 @@ public class D2Prop {
                 oString = oString.replaceAll("%d", Integer.toString(pVals[1]));
                 return oString.replaceAll("%s", D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name")));
 
-
             case (17):
 
                 return "By time!? Oh shi....";
@@ -362,10 +370,11 @@ public class D2Prop {
                 return "By time!? Oh shi....";
 
             case (19):
-                List<D2TxtFileItemProperties> matchingPropsRecords = D2TxtFile.PROPS.searchColumns("stat1", itemStatCostRow.get("Stat"))
-                        .stream()
-                        .filter(it -> it.get("stat2").isEmpty())
-                        .collect(Collectors.toList());
+            case (29):
+                // Chthon Note: searchColumnsMultipleHits() was renamed to searchColumnsMultipleHits searchColumns()
+                // But not in all places on the 2.7 branch
+                // No idea how upstream compiles...
+                List<D2TxtFileItemProperties> matchingPropsRecords = ((ArrayList<D2TxtFileItemProperties>) D2TxtFile.PROPS.searchColumns("stat1", itemStatCostRow.get("Stat"))).stream().filter(it -> it.get("stat2").isEmpty()).collect(Collectors.toList());
                 if (matchingPropsRecords.isEmpty()) {
                     if (oString.equals("Indestructible")) {
                         matchingPropsRecords = singletonList(D2TxtFile.PROPS.searchColumn("code", "indestruct"));
@@ -381,7 +390,12 @@ public class D2Prop {
                 }
                 D2TxtFileItemProperties o = matchingPropsRecords.get(0);
                 String tooltip = o.get("*Tooltip");
-                return tooltip.replace("#", String.valueOf(pVals[0]));
+                String value = tooltip.replace("#", String.valueOf(pVals[0]));
+                if (pVals[0] < 0) {
+                    return value.replace("+", "");
+                } else {
+                    return value;
+                }
 
             case (20):
                 if (dispLoc == 1) {
@@ -403,8 +417,11 @@ public class D2Prop {
                 }
 
             case (23):
-
-                return pVals[1] + "% " + oString + " " + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.MONSTATS.getRow(pVals[0]).get("NameStr"));
+                return pVals[1] + "% " + oString + " "
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(
+                                        D2TxtFile.MONSTATS.getRow(pVals[0]).get("NameStr"));
 
             case (24):
 
@@ -413,12 +430,10 @@ public class D2Prop {
                 return "Level " + pVals[0] + " " + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(pVals[1]).get("skilldesc")).get("str name")) + " " + oString;
 
             case (27):
-                return "+" + pVals[1] + " to " + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name")) + " " + D2Files.getInstance().getTranslations().getTranslation((D2TxtFile.SKILLS.getRow(D2TxtFile.SKILL_DESC.getRow(pVals[0]).getRowNum()).get("charclass").charAt(0) + "").toUpperCase() + D2TxtFile.SKILLS.getRow(D2TxtFile.SKILL_DESC.getRow(pVals[0]).getRowNum()).get("charclass").substring(1) + "Only");
+                            return "+" + pVals[1] + " to " + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name")) + " " + D2Files.getInstance().getTranslations().getTranslation((D2TxtFile.SKILLS.getRow(D2TxtFile.SKILL_DESC.getRow(pVals[0]).getRowNum()).get("charclass").charAt(0) + "").toUpperCase() + D2TxtFile.SKILLS.getRow(D2TxtFile.SKILL_DESC.getRow(pVals[0]).getRowNum()).get("charclass").substring(1) + "Only");
 
             case (28):
-
                 return "+" + pVals[1] + " to " + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", D2TxtFile.SKILLS.getRow(pVals[0]).get("skilldesc")).get("str name"));
-
 
             //UNOFFICIAL PROPERTIES
 

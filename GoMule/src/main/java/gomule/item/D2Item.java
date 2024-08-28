@@ -452,7 +452,8 @@ public class D2Item implements Comparable, D2ItemInterface {
             D2TxtFileItemProperties lRuneWord = D2TxtFile.RUNES
                     .searchRuneWord(lList);
             if (lRuneWord != null) {
-                iItemName = D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"));
+                String lookedUpName = D2Files.getInstance().getTranslations().getTranslation(lRuneWord.get("Name"));
+                iItemName = lookedUpName == null ? lRuneWord.get("*Rune Name") : lookedUpName;
             }
         }
 
@@ -477,6 +478,16 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (iReqDex != -1) {
                 iReqDex -= 10;
             }
+        }
+
+        if ("bkd".equals(item_type) && pFile.read(8) != 0) {
+            /*
+            Strange case with this quest item, it seems to have a trailing 10th byte of 00
+            This needs to be skipped over, it's not clear if there's a general rule here but
+            I've implemented it as a specific one just in case. This code reads and checks if there's a zero
+            and then resets the skip if there is.
+             */
+            pFile.set_byte_pos(pFile.get_pos() - 8);
         }
     }
 
@@ -580,7 +591,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                         .getRow(magic_suffix);
                 String lSufName = lSuffix.get("Name");
                 if (lSufName != null && !lSufName.equals("")) {
-                    iItemName = iItemName + " " + D2Files.getInstance().getTranslations().getTranslation(lSufName);
+                    iItemName = iItemName + " "
+                            + D2Files.getInstance().getTranslations().getTranslation(lSufName);
                     int lSufReq = getReq(lSuffix.get("levelreq"));
                     if (lSufReq > iReqLvl) {
                         iReqLvl = lSufReq;
@@ -664,8 +676,8 @@ public class D2Item implements Comparable, D2ItemInterface {
                     .getRow(rare_name_1 - 156);
             D2TxtFileItemProperties lRareName2 = D2TxtFile.RARESUFFIX
                     .getRow(rare_name_2 - 1);
-            iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
-                    + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
+                iItemName = D2Files.getInstance().getTranslations().getTranslation(lRareName1.get("name")) + " "
+                        + D2Files.getInstance().getTranslations().getTranslation(lRareName2.get("name"));
 
             rare_prefixes = new short[3];
             rare_suffixes = new short[3];
@@ -707,6 +719,7 @@ public class D2Item implements Comparable, D2ItemInterface {
             break;
 
             case 2: {
+                if (iItemName.contains("Token of Absolution")) iItemName = "Token of Absolution";
                 readTypes(pFile);
                 break;
             }
@@ -1619,8 +1632,12 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (rare_prefixes[x] > 1) {
 
                 retStr = retStr
-                        + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.PREFIX.getRow(
-                        rare_prefixes[x]).get("Name")) + " ";
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(D2TxtFile.PREFIX
+                                        .getRow(rare_prefixes[x])
+                                        .get("Name"))
+                        + " ";
             }
         }
 
@@ -1631,8 +1648,12 @@ public class D2Item implements Comparable, D2ItemInterface {
             if (rare_suffixes[x] > 1) {
 
                 retStr = retStr
-                        + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SUFFIX.getRow(
-                        rare_suffixes[x]).get("Name")) + " ";
+                        + D2Files.getInstance()
+                                .getTranslations()
+                                .getTranslation(D2TxtFile.SUFFIX
+                                        .getRow(rare_suffixes[x])
+                                        .get("Name"))
+                        + " ";
             }
         }
 

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class D2ItemTest {
 
     public static final byte[] HEALTH_POT = new byte[]{16, 4, -96, 8, 21, 0, 0, 79, -76, 0};
-    public static final byte[] SMALL_CHARM = new byte[]{16, 0, -128, 0, 5, 36, 68, -40, 79, -40, -114, -124, 14, 11, 80, -80, 12, 0, -76, -56, -7, 15};
+    public static final byte[] SMALL_CHARM = new byte[]{16, 0, -128, 0, 5, 36, 68, -40, 79, -40, -114, -124, 14, 11, 80, -80, 12, 0, -76, 120, -10, 31};
 
     @Test
     public void viridianSmallCharm() throws Exception {
@@ -35,7 +35,7 @@ public class D2ItemTest {
                 "+2 to All Skills\n" +
                 "All Stats +5\n" +
                 "All Resistances +26\n";
-        byte[] bytes = {16, 0, -128, 0, -115, 8, -32, 89, 24, -114, 8, -3, -47, -82, 55, 32, 2, -128, -110, 0, 37, 1, -91, 1, -91, 19, 76, 41, -104, 86, 48, -75, 96, -6, -93, -1};
+        byte[] bytes = {16, 0, -128, 0, -115, 8, -32, 89, 24, -114, 8, -3, -47, -82, 55, 32, 2, -128, -110, 0, 37, 1, -91, 1, -91, 19, -30, 82, -120, 91, 33, -82, -123, -72, 63, -6, 15};
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -61,7 +61,7 @@ public class D2ItemTest {
                 "Set (3 items): +15 to Dexterity\n" +
                 "Set (4 items): +15 to Dexterity\n" +
                 "\n";
-        byte[] bytes = {16, 64, -128, 0, 77, 38, -128, 27, 13, 22, -106, -64, 123, -29, -94, 8, -48, 64, 98, -63, 57, 32, 101, 1, 53, 7, -112, 19, 94, 96, 120, 114, 20, 76, -1, 11, 120, -3, 23, -16, -6, 47, -32, -11, 31};
+        byte[] bytes = {16, 64, -128, 0, 77, 38, -128, 27, 13, 22, -106, -64, 123, -29, -94, 8, -48, 64, 98, -63, 57, 32, 101, 1, 53, 7, -112, 19, -12, -64, -16, -28, 40, -104, -2, 23, -16, -6, 47, -32, -11, 95, -64, -21, 63};
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -82,7 +82,7 @@ public class D2ItemTest {
                 "+49% Enhanced Defense\n" +
                 "Fire Resist +14%\n" +
                 "23% Better Chance of Getting Magic Items\n";
-        byte[] bytes = {16, 0, -128, 0, -115, 42, -64, -84, 27, 10, 28, 65, -50, 111, 70, 109, 87, 73, 84, 69, -36, -4, 72, -71, 52, 11, 11, 72, 16, -128, 16, -29, 4, 16, -113, 1, -108, -67, 46, 40, 94, 2, 0, -6, 15};
+        byte[] bytes = {16, 0, -128, 0, -115, 42, -64, -84, 27, 10, 28, 65, -50, 111, 70, 109, 87, 73, 84, 69, -36, -4, 72, -71, 52, 11, 11, 72, 16, -128, 16, -29, -124, 53, 30, 3, 40, 123, 93, 80, -68, 4, 0, -12, 31};
         runItemDumpComparison(expected, loadD2Item(bytes));
     }
 
@@ -312,6 +312,140 @@ public class D2ItemTest {
                 "Version: Resurrected\n";
         byte[] bytes = decode("10008000055496CC1802CC6C48C7C7FFFB0F");
         runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void coh() throws Exception {
+        String expected = "Chains of Honor\n" + "Archon Plate\n"
+                + "DolUmBerIst\n"
+                + "Defense: 882\n"
+                + "Durability: 15 of 60\n"
+                + "Required Level: 63\n"
+                + "Required Strength: 103\n"
+                + "Fingerprint: 0xed9dd144\n"
+                + "Item Level: 85\n"
+                + "Version: Resurrected\n"
+                + "+2 to All Skills\n"
+                + "+200% Damage to Demons\n"
+                + "+100% Damage to Undead\n"
+                + "8% Life stolen per hit\n"
+                + "+70% Enhanced Defense\n"
+                + "+20 to Strength\n"
+                + "Replenish Life +7\n"
+                + "All Resistances +65\n"
+                + "Damage Reduced by 8%\n"
+                + "25% Better Chance of Getting Magic Items\n"
+                + "4 Sockets (4 used)\n"
+                + "Socketed: Dol Rune\n"
+                + "Socketed: Um Rune\n"
+                + "Socketed: Ber Rune\n"
+                + "Socketed: Ist Rune\n"
+                + "\n"
+                + "Dol Rune\n"
+                + "Required Level: 31\n"
+                + "Version: Resurrected\n"
+                + "Weapons: Hit Causes Monster to Flee +25%\n"
+                + "Armor: Replenish Life +7\n"
+                + "Shields: Replenish Life +7\n"
+                + "\n"
+                + "Um Rune\n"
+                + "Required Level: 47\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 25% Chance of Open Wounds\n"
+                + "Armor: Cold Resist +15%\n"
+                + "Lightning Resist +15%\n"
+                + "Fire Resist +15%\n"
+                + "Poison Resist +15%\n"
+                + "Shields: Cold Resist +22%\n"
+                + "Lightning Resist +22%\n"
+                + "Fire Resist +22%\n"
+                + "Poison Resist +22%\n"
+                + "\n"
+                + "Ber Rune\n"
+                + "Required Level: 63\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 20% Chance of Crushing Blow\n"
+                + "Armor: Damage Reduced by 8%\n"
+                + "Shields: Damage Reduced by 8%\n"
+                + "\n"
+                + "Ist Rune\n"
+                + "Required Level: 51\n"
+                + "Version: Resurrected\n"
+                + "Weapons: 30% Better Chance of Getting Magic Items\n"
+                + "Armor: 25% Better Chance of Getting Magic Items\n"
+                + "Shields: 25% Better Chance of Getting Magic Items\n";
+        byte[] bytes = {16, 72, -128, 12, -51, 12, 0, -102, 25, -119, -94, 59, -37, -85, 2, 10, -108, 8, -15, 60, -96, -1, 0, 104, 32, 24, 57, -95, 47, -123, -66, 21, -6, 90, -24, -29, -127, -56, -61, 77, 15, -98, 63, -6, 15, 16, 0, -96, 8, 53, 0, -32, 124, -66, 2, 16, 0, -96, 8, 51, 4, -32, 48, 76, 0, 16, 0, -96, 8, 53, 8, -32, 108, -65, 3, 16, 0, -96, 8, 53, 12, -32, 48, 95, 1};
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void runeword_2_6() throws Exception {
+        String expected = "Bulwark\n" +
+                "Mask\n" +
+                "ShaelIoSol\n" +
+                "Defense: 38\n" +
+                "Durability: 17 of 20\n" +
+                "Required Level: 35\n" +
+                "Required Strength: 23\n" +
+                "Fingerprint: 0x4635278f\n" +
+                "Item Level: 85\n" +
+                "Version: Resurrected\n" +
+                "+20% Faster Hit Recovery\n" +
+                "4% Life stolen per hit\n" +
+                "+76% Enhanced Defense\n" +
+                "+10 to Vitality\n" +
+                "Increase Maximum Life 5%\n" +
+                "Replenish Life +30\n" +
+                "Damage Reduced by 11%\n" +
+                "Damage Reduced by 7\n" +
+                "3 Sockets (3 used)\n" +
+                "Socketed: Shael Rune\n" +
+                "Socketed: Io Rune\n" +
+                "Socketed: Sol Rune\n" +
+                "\n" +
+                "Shael Rune\n" +
+                "Required Level: 29\n" +
+                "Version: Resurrected\n" +
+                "Weapons: +20% Increased Attack Speed\n" +
+                "Armor: +20% Faster Hit Recovery\n" +
+                "Shields: +20% Faster Block Rate\n" +
+                "\n" +
+                "Io Rune\n" +
+                "Required Level: 35\n" +
+                "Version: Resurrected\n" +
+                "Weapons: +10 to Vitality\n" +
+                "Armor: +10 to Vitality\n" +
+                "Shields: +10 to Vitality\n" +
+                "\n" +
+                "Sol Rune\n" +
+                "Required Level: 27\n" +
+                "Version: Resurrected\n" +
+                "Weapons: Armor: Damage Reduced by 7\n" +
+                "Shields: Damage Reduced by 7\n";
+        byte[] bytes = decode("10 08 80 04 05 00 D4 92 D4 1E 4F 6A 8C AA 02 BA 1A 10 50 44 98 FF 10 98 90 98 C6 83 A0 84 67 F2 FC 07 10 00 A0 00 35 00 E0 7C B6 01 10 00 A0 00 35 04 E0 7C F6 01 10 00 A0 00 35 08 E0 7C 98 00 10");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void new_charm() throws Exception {
+        String expected = "Flame Rift\n" + "Grand Charm\n"
+                + "Required Level: 75\n"
+                + "Fingerprint: 0x69f99b80\n"
+                + "Item Level: 99\n"
+                + "Version: Resurrected\n"
+                + "Monster Fire Immunity is Sundered\n"
+                + "Fire Resist -86%\n";
+        byte[] bytes = decode("10 00 80 00 05 0C 54 D8 6D 00 DC CC 4F 1B 5F 91 0C 27 E4 F4 62 E9 3F");
+        runItemDumpComparison(expected, loadD2Item(bytes));
+    }
+
+    @Test
+    public void cairn_stones_partial_read() throws Exception {
+        D2Item d2Item = loadD2Item(decode("10 00 A0 00 05 C8 54 A5 31 00"));
+        String expected = "Key to the Cairn Stones\n" +
+                "Version: Resurrected\n";
+        runItemDumpComparison(expected, d2Item);
+        assertEquals(10, d2Item.getItemLength());
     }
 
     private byte[] decode(String s) {

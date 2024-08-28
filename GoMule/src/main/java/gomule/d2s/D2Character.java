@@ -144,7 +144,7 @@ public class D2Character extends D2ItemListAdapter {
         iReader.set_byte_pos(4);
         long lVersion = iReader.read(32);
 //        System.err.println("Version: " + lVersion);
-        if (lVersion != 98) throw new Exception("Incorrect Character version: " + lVersion);
+        if (lVersion != 99) throw new Exception("Incorrect Character version: " + lVersion);
         iReader.set_byte_pos(8);
         long lSize = iReader.read(32);
         if (iReader.get_length() != lSize) throw new Exception("Incorrect FileSize: " + lSize);
@@ -204,7 +204,11 @@ public class D2Character extends D2ItemListAdapter {
         if (iReader.read(32) != 0) {
             cMercInfo = new HashMap();
             iReader.skipBits(16);
-            D2TxtFileItemProperties hireCol = Iterables.getLast(D2TxtFile.HIRE.searchColumns("Id", Long.toString(iReader.read(16))));
+            D2TxtFileItemProperties hireCol = (D2TxtFileItemProperties)
+            // Chthon Note: searchColumnsMultipleHits() was renamed to searchColumnsMultipleHits searchColumns()
+                // But not in all places on the 2.7 branch
+                // No idea how upstream compiles...
+            Iterables.getLast(D2TxtFile.HIRE.searchColumns("Id", Long.toString(iReader.read(16))));
             cMercInfo.put("race", hireCol.get("Hireling"));
             cMercInfo.put("type", hireCol.get("*SubType"));
             iReader.skipBits(-32);
@@ -1408,7 +1412,8 @@ public class D2Character extends D2ItemListAdapter {
         for (int x = 0; x < skillArr.size(); x = x + 1) {
 
             try {
-                int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(skillArr.get(x).get("*Id")))).get("SkillPage"));
+                int page = Integer.parseInt((D2TxtFile.SKILL_DESC.getRow(Integer.parseInt(((D2TxtFileItemProperties) skillArr.get(x)).get("*Id")))).get("SkillPage"));
+                if (page == 0) continue;
                 skillTrees[page - 1] = skillTrees[page - 1] + D2Files.getInstance().getTranslations().getTranslation(D2TxtFile.SKILL_DESC.searchColumn("skilldesc", skillArr.get(x).get("skilldesc")).get("str name")) + ": " + initSkills[page - 1][skillCounter[page - 1]] + "/" + cSkills[page - 1][skillCounter[page - 1]] + "\n";
                 skillCounter[page - 1]++;
             } catch (NumberFormatException e) {

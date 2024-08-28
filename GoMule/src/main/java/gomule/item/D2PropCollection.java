@@ -335,7 +335,6 @@ public class D2PropCollection extends ArrayList {
         tidy = true;
     }
 
-
     public StringBuilder generateDisplay(int qFlag, int cLvl) {
 
         StringBuilder arrOut = new StringBuilder();
